@@ -29,7 +29,7 @@ export const LABELS = {
     orderTitle: '👑 Dernière ligne droite — ordonne le top 5',
     orderHint:
       'Les places 4 et 5 ne sont pas ordonnées officiellement : peu importe ton ordre entre elles.',
-    chooseOption: '— Choisir —',
+    choosePosition: '— Position —',
     orderMedals: ['🥇', '🥈', '🥉', '4ᵉ', '5ᵉ'],
     orderPoints: ['15 pts', '10 pts', '5 pts', '2,5 pts', '2,5 pts'],
     validateOrder: '👑 VALIDER MON PODIUM',
@@ -92,10 +92,12 @@ export const LABELS = {
     top15Save: 'Ajouter au top 15',
     top15Saved: (regions: string) => `✔ Top 15 en cours : ${regions}`,
     top5Label: 'Top 5 — ajoute les finalistes annoncées (l’ordre n’importe pas à cette étape)',
+    top5NeedTop15: 'Renseigne d’abord le top 15 ci-dessus.',
     top5Save: 'Ajouter au top 5',
     top5Saved: (regions: string) => `✔ Top 5 en cours : ${regions}`,
     podiumLabel:
       'Classement des 5 finalistes dans l’ordre (ajoute-les une par une) : gagnante, 1re dauphine, 2e dauphine, puis 4ᵉ et 5ᵉ',
+    podiumNeedTop5: 'Renseigne d’abord le top 5 ci-dessus.',
     podiumSave: 'Ajouter au podium',
     podiumSaved: (regions: string) => `✔ Podium : ${regions}`,
     resultsSaved: (stage: string) => `✅ ${stage} enregistré`,

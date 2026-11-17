@@ -70,6 +70,9 @@ export default function AdminPage() {
   const top15 = state.results.top15 ?? [];
   const top5 = state.results.top5 ?? [];
   const podium = state.results.podium ?? [];
+  const top15Pool = state.candidates;
+  const top5Pool = state.candidates.filter((c) => top15.includes(String(c.id)));
+  const podiumPool = state.candidates.filter((c) => top5.includes(String(c.id)));
 
   function regionsOf(ids: string[]): string {
     return ids.map((id) => byId.get(id)?.region ?? '?').join(', ');
@@ -86,6 +89,7 @@ export default function AdminPage() {
     selected,
     setSelected,
     candidates,
+    emptyPoolHint,
   }: {
     resStage: 'top15' | 'top5' | 'podium';
     max: number;
@@ -97,20 +101,25 @@ export default function AdminPage() {
     selected: string;
     setSelected: (v: string) => void;
     candidates: StateResponse['candidates'];
+    emptyPoolHint?: string;
   }) {
     const complete = saved.length === max;
     const available = candidates.filter((c) => !saved.includes(String(c.id)));
     return (
       <div className="admin-section">
         <label>{label}</label>
-        <select value={selected} onChange={(e) => setSelected(e.target.value)} disabled={complete}>
-          <option value="">{chooseLabel}</option>
-          {available.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.region}
-            </option>
-          ))}
-        </select>
+        {available.length === 0 && !complete ? (
+          <p className="hint">{emptyPoolHint}</p>
+        ) : (
+          <select value={selected} onChange={(e) => setSelected(e.target.value)} disabled={complete}>
+            <option value="">{chooseLabel}</option>
+            {available.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.region}
+              </option>
+            ))}
+          </select>
+        )}
         <button
           className="small"
           disabled={complete || !selected}
@@ -186,7 +195,7 @@ export default function AdminPage() {
           savedLabel={LABELS.admin.top15Saved}
           selected={top15Sel}
           setSelected={setTop15Sel}
-          candidates={state.candidates}
+          candidates={top15Pool}
         />
 
         <ResultsBlock
@@ -199,7 +208,8 @@ export default function AdminPage() {
           savedLabel={LABELS.admin.top5Saved}
           selected={top5Sel}
           setSelected={setTop5Sel}
-          candidates={state.candidates}
+          candidates={top5Pool}
+          emptyPoolHint={LABELS.admin.top5NeedTop15}
         />
 
         <ResultsBlock
@@ -212,7 +222,8 @@ export default function AdminPage() {
           savedLabel={LABELS.admin.podiumSaved}
           selected={podiumSel}
           setSelected={setPodiumSel}
-          candidates={state.candidates}
+          candidates={podiumPool}
+          emptyPoolHint={LABELS.admin.podiumNeedTop5}
         />
       </div>
 
