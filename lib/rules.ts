@@ -23,6 +23,7 @@ export type Picks = {
 export type Results = {
   top15?: string[];
   top5?: string[];
+  podium?: string[];
 };
 
 export type PlayerScore = {
@@ -42,10 +43,13 @@ export function scoreTop5(picks: string[] | undefined, realTop5: string[] | unde
   return picks.filter((id) => realTop5.includes(id)).length * RULES.top5.perFinalist;
 }
 
-export function scoreOrder(order: string[] | undefined, realTop5: string[] | undefined): number {
-  if (!order || !realTop5) return 0;
-  const podium = realTop5.slice(0, 3);
-  const nonPodium = realTop5.slice(3);
+export function scoreOrder(
+  order: string[] | undefined,
+  realTop5: string[] | undefined,
+  podium: string[] | undefined
+): number {
+  if (!order || !realTop5 || !podium) return 0;
+  const nonPodium = realTop5.filter((id) => !podium.includes(id));
   let points = 0;
   if (order[0] && order[0] === podium[0]) points += RULES.order.winner;
   if (order[1] && order[1] === podium[1]) points += RULES.order.firstDauphine;
@@ -59,7 +63,7 @@ export function scoreOrder(order: string[] | undefined, realTop5: string[] | und
 export function scorePlayer(picks: Picks, results: Results): PlayerScore {
   const top15 = scoreTop15(picks.top15, results.top15);
   const top5 = scoreTop5(picks.top5, results.top5);
-  const order = scoreOrder(picks.order, results.top5);
+  const order = scoreOrder(picks.order, results.top5, results.podium);
   return { top15, top5, order, total: top15 + top5 + order };
 }
 
@@ -74,8 +78,7 @@ export function rankPlayers(
   players: { pseudo: string; picks: Picks; earliestSubmittedAt: number }[],
   results: Results
 ): RankedPlayer[] {
-  const realTop5 = results.top5;
-  const podium = realTop5 ? realTop5.slice(0, 3) : [];
+  const podium = results.podium ?? [];
   const scored = players.map((p) => {
     const score = scorePlayer(p.picks, results);
     const winnerFound = podium.length > 0 && p.picks.order?.[0] === podium[0] ? 1 : 0;

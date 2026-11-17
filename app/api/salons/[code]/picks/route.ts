@@ -41,11 +41,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     const top5 = db
       .prepare(`SELECT data FROM resultats WHERE salon_id = ? AND stage = 'top5'`)
       .get(salon.id) as { data: string } | undefined;
-    if (top5) {
-      const realTop5: string[] = JSON.parse(top5.data);
-      if (!data.every((id: string) => realTop5.includes(String(id)))) {
-        return NextResponse.json({ error: 'Le classement doit reprendre les 5 finalistes' }, { status: 400 });
-      }
+    const realTop5: string[] = top5 ? JSON.parse(top5.data) : [];
+    if (realTop5.length !== 5) {
+      return NextResponse.json({ error: 'Les 5 finalistes ne sont pas encore connus' }, { status: 409 });
+    }
+    if (!data.every((id: string) => realTop5.includes(String(id)))) {
+      return NextResponse.json({ error: 'Le classement doit reprendre les 5 finalistes' }, { status: 400 });
     }
   }
   db.prepare(
