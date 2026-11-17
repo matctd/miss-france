@@ -268,7 +268,7 @@ export default function SalonPage() {
   } else if (stage === 'done') {
     body = <FinalScreen state={state} regions={regions} />;
   } else {
-    body = <RevealScreen state={state} regions={regions} me={state.me.pseudo} />;
+    body = <RevealScreen state={state} regions={regions} me={state.me.pseudo} myPicks={state.me.picks} />;
   }
 
   return (
@@ -320,10 +320,12 @@ function RevealScreen({
   state,
   regions,
   me,
+  myPicks,
 }: {
   state: StateResponse;
   regions: (ids: string[] | undefined) => string;
   me: string;
+  myPicks: StateResponse['me'] extends null ? never : NonNullable<StateResponse['me']>['picks'];
 }) {
   const stage = state.stage;
   const revealed: Record<string, { label: string; key: string }> = {};
@@ -335,21 +337,19 @@ function RevealScreen({
 
   return (
     <>
+      <ScoresCard state={state} me={me} />
       <div className="card">
         <h2>{LABELS.joueur.lockedTitle}</h2>
-        {Object.values(revealed).map(({ label, key }) => (
-          <div key={key} className="picks-list">
-            <h2 style={{ marginTop: 12 }}>{label}</h2>
-            {Object.entries(state.revealedPicks).map(([pseudo, picks]) => (
-              <div className="row" key={pseudo}>
-                <span>{pseudo === me ? `⭐ ${pseudo}` : pseudo}</span>
-                <span className="names">{regions(picks[key])}</span>
-              </div>
-            ))}
-          </div>
-        ))}
+        <div className="picks-list">
+          <h2 style={{ marginTop: 12 }}>{LABELS.joueur.myPicksTitle}</h2>
+          {Object.values(revealed).map(({ label, key }) => (
+            <div className="row" key={key}>
+              <span>{label}</span>
+              <span className="names">{regions(myPicks[key])}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <ScoresCard state={state} me={me} />
     </>
   );
 }

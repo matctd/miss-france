@@ -39,6 +39,7 @@ export const LABELS = {
     maxError: (max: number) => `Maximum ${max} miss — décoches-en une d'abord`,
     lockedTitle: '🔒 Votes verrouillés — regardez le direct 📺',
     revealLabels: { top15: 'Top 15', top5: 'Top 5', order: 'Podium' },
+    myPicksTitle: 'Tes pronostics',
     scoresTitle: '🏆 Classement des amis',
     scoresHead: { player: 'Joueur', top15: 'Top 15', top5: 'Top 5', order: 'Podium', total: 'Total' },
     tiebreakHint:
