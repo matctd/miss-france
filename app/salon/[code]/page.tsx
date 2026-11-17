@@ -31,7 +31,7 @@ export default function SalonPage() {
   const [checkedToken, setCheckedToken] = useState(false);
   const [state, setState] = useState<StateResponse | null>(null);
   const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
+  const [showScores, setShowScores] = useState(false);
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<string[]>([]);
   const [orderRanks, setOrderRanks] = useState<Record<string, string>>({});
@@ -96,7 +96,6 @@ export default function SalonPage() {
 
   function toggle(id: number, max: number) {
     setError('');
-    setInfo('');
     const key = String(id);
     setSelection((prev) => {
       if (prev.includes(key)) return prev.filter((k) => k !== key);
@@ -118,7 +117,6 @@ export default function SalonPage() {
     setError('');
     try {
       await api(`/api/salons/${code}/picks`, { token, stage, data });
-      setInfo(LABELS.joueur.savedPicks);
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -129,7 +127,6 @@ export default function SalonPage() {
     setError('');
     try {
       await api(`/api/salons/${code}/picks`, { token, stage: 'order', data: ordered });
-      setInfo(LABELS.joueur.savedOrder);
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -188,6 +185,8 @@ export default function SalonPage() {
 
   const top5Pool = realTop15 ? state.candidates.filter((c) => realTop15.includes(String(c.id))) : state.candidates;
   const filtered = state.candidates.filter((c) => c.region.toLowerCase().includes(search.toLowerCase()));
+  const savedTop = Boolean(state.me.picks[stage === 'top15_open' ? 'top15' : 'top5']);
+  const savedOrder = Boolean(state.me.picks.order);
 
   let body: React.ReactNode = null;
 
@@ -234,8 +233,17 @@ export default function SalonPage() {
           onClick={() => submitPicks(stage === 'top15_open' ? 'top15' : 'top5', current)}
           disabled={current.length !== max}
         >
-          {stage === 'top15_open' ? LABELS.joueur.validateTop15 : LABELS.joueur.validateTop5}
+          {savedTop
+            ? stage === 'top15_open'
+              ? LABELS.joueur.savedTop15Button
+              : LABELS.joueur.savedTop5Button
+            : stage === 'top15_open'
+              ? LABELS.joueur.validateTop15
+              : LABELS.joueur.validateTop5}
         </button>
+        {savedTop && (
+          <p className="hint" style={{ textAlign: 'center' }}>{LABELS.joueur.savedPicks}</p>
+        )}
       </div>
     );
   } else if (stage === 'final_open') {
@@ -284,8 +292,11 @@ export default function SalonPage() {
           }
           disabled={!ranksAssigned}
         >
-          {LABELS.joueur.validateOrder}
+          {savedOrder ? LABELS.joueur.savedOrderButton : LABELS.joueur.validateOrder}
         </button>
+        {savedOrder && (
+          <p className="hint" style={{ textAlign: 'center' }}>{LABELS.joueur.savedOrder}</p>
+        )}
       </div>
     );
   } else if (stage === 'done') {
@@ -325,6 +336,15 @@ export default function SalonPage() {
 
       {body}
 
+      {stage.endsWith('_open') && (
+        <p style={{ textAlign: 'center', marginTop: 12 }}>
+          <button className="small" onClick={() => setShowScores((v) => !v)}>
+            {showScores ? LABELS.joueur.hideScores : LABELS.joueur.showScores}
+          </button>
+        </p>
+      )}
+      {stage.endsWith('_open') && showScores && <ScoresCard state={state} me={state.me.pseudo} />}
+
       <p style={{ textAlign: 'center', marginTop: 12 }}>
         <button className="small" onClick={copyInvite}>
           {LABELS.joueur.copyInvite}
@@ -332,7 +352,6 @@ export default function SalonPage() {
         {copied && <span className="success" style={{ marginLeft: 8 }}>{LABELS.joueur.inviteCopied}</span>}
       </p>
 
-      {info && <p className="success" style={{ textAlign: 'center' }}>{info}</p>}
       {error && <p className="error" style={{ textAlign: 'center' }}>{error}</p>}
 
       {state.isAdmin && (

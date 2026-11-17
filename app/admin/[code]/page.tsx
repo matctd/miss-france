@@ -19,6 +19,7 @@ export default function AdminPage() {
   const [top5Sel, setTop5Sel] = useState('');
   const [podiumRanks, setPodiumRanks] = useState<Record<string, string>>({});
   const [candidatesText, setCandidatesText] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setTok(getToken(code));
@@ -59,6 +60,16 @@ export default function AdminPage() {
       refresh();
     } catch (e) {
       setError((e as Error).message);
+    }
+  }
+
+  async function copyInvite() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/salon/${code}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setError(LABELS.admin.copyError);
     }
   }
 
@@ -168,6 +179,12 @@ export default function AdminPage() {
       <div className="logo" style={{ fontSize: 20, padding: '16px 0 4px' }}>
         {LABELS.admin.title} · {state.code}
       </div>
+      <p style={{ textAlign: 'center', marginTop: 4 }}>
+        <button className="small" onClick={copyInvite}>
+          {LABELS.admin.copyInvite}
+        </button>
+        {copied && <span className="success" style={{ marginLeft: 8 }}>{LABELS.admin.inviteCopied}</span>}
+      </p>
       <div className="card">
         <h2>{STAGE_TEXT[stage] ?? stage}</h2>
         {stage === 'top15_open' && (
