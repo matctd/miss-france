@@ -36,7 +36,6 @@ export default function SalonPage() {
   const [selection, setSelection] = useState<string[]>([]);
   const [orderRanks, setOrderRanks] = useState<Record<string, string>>({});
   const [joinPseudo, setJoinPseudo] = useState('');
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setTok(getToken(code));
@@ -130,16 +129,6 @@ export default function SalonPage() {
       refresh();
     } catch (e) {
       setError((e as Error).message);
-    }
-  }
-
-  async function copyInvite() {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/salon/${code}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    } catch {
-      setError(LABELS.joueur.copyError);
     }
   }
 
@@ -344,13 +333,6 @@ export default function SalonPage() {
         </p>
       )}
       {stage.endsWith('_open') && showScores && <ScoresCard state={state} me={state.me.pseudo} />}
-
-      <p style={{ textAlign: 'center', marginTop: 12 }}>
-        <button className="small" onClick={copyInvite}>
-          {LABELS.joueur.copyInvite}
-        </button>
-        {copied && <span className="success" style={{ marginLeft: 8 }}>{LABELS.joueur.inviteCopied}</span>}
-      </p>
 
       {error && <p className="error" style={{ textAlign: 'center' }}>{error}</p>}
 
