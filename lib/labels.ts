@@ -61,9 +61,6 @@ export const LABELS = {
     statsWinners: (n: number) => `· ${n} joueurs ont trouvé la gagnante`,
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
-    copyInvite: '🔗 Copier le lien d’invitation',
-    copyError: 'Copie impossible — copie l’adresse de la page manuellement.',
-    inviteCopied: 'Lien copié — envoie-le à tes amis !',
   },
   admin: {
     title: '🎛️ Console admin',
