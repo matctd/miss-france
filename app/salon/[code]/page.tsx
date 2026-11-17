@@ -3,15 +3,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, setToken, type Candidate, type StateResponse } from '@/lib/client';
+import { LABELS } from '@/lib/labels';
 
 const STAGE_LABELS: Record<string, string> = {
-  top15_open: 'Top 15',
-  top15_locked: 'Top 15',
-  top5_open: 'Top 5',
-  top5_locked: 'Top 5',
-  final_open: 'Classement',
-  final_locked: 'Classement',
-  done: 'Résultats',
+  top15_open: LABELS.joueur.stageTabs.top15,
+  top15_locked: LABELS.joueur.stageTabs.top15,
+  top5_open: LABELS.joueur.stageTabs.top5,
+  top5_locked: LABELS.joueur.stageTabs.top5,
+  final_open: LABELS.joueur.stageTabs.final,
+  final_locked: LABELS.joueur.stageTabs.final,
+  done: LABELS.joueur.stageTabs.done,
 };
 
 const STAGE_ORDER = ['top15', 'top5', 'final'];
@@ -95,7 +96,7 @@ export default function SalonPage() {
     setSelection((prev) => {
       if (prev.includes(key)) return prev.filter((k) => k !== key);
       if (prev.length >= max) {
-        setError(`Maximum ${max} miss — décoches-en une d'abord`);
+        setError(LABELS.joueur.maxError(max));
         return prev;
       }
       return [...prev, key];
@@ -112,7 +113,7 @@ export default function SalonPage() {
     setError('');
     try {
       await api(`/api/salons/${code}/picks`, { token, stage, data });
-      setInfo('✅ Pronostic enregistré ! Modifiable jusqu’au verrouillage.');
+      setInfo(LABELS.joueur.savedPicks);
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -123,7 +124,7 @@ export default function SalonPage() {
     setError('');
     try {
       await api(`/api/salons/${code}/picks`, { token, stage: 'order', data: orderSelection });
-      setInfo('👑 Podium validé ! Modifiable jusqu’au verrouillage.');
+      setInfo(LABELS.joueur.savedOrder);
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -135,8 +136,8 @@ export default function SalonPage() {
   if (!state) {
     return (
       <main className="container">
-        <div className="logo">👑 MISS PRONOS 👑</div>
-        <p className="tagline">Chargement du salon {code}…</p>
+        <div className="logo">{LABELS.app.title}</div>
+        <p className="tagline">{LABELS.joueur.loadingSalon} {code}…</p>
         {error && <p className="error">{error}</p>}
       </main>
     );
@@ -145,10 +146,10 @@ export default function SalonPage() {
   if (!token || !state.me) {
     return (
       <main className="container">
-        <div className="logo">👑 MISS PRONOS 👑</div>
-        <p className="tagline">Salon {code} — rejoins la partie !</p>
+        <div className="logo">{LABELS.app.title}</div>
+        <p className="tagline">{LABELS.joueur.joinHeading} {code} {LABELS.joueur.joinHeadingSuffix}</p>
         <div className="card">
-          <h2>Ton pseudo</h2>
+          <h2>{LABELS.joueur.joinCardTitle}</h2>
           <input
             type="text"
             value={joinPseudo}
@@ -157,7 +158,7 @@ export default function SalonPage() {
             maxLength={30}
           />
           <button onClick={join} disabled={!joinPseudo.trim()}>
-            REJOINDRE →
+            {LABELS.joueur.joinButton}
           </button>
           {error && <p className="error">{error}</p>}
         </div>
@@ -183,15 +184,13 @@ export default function SalonPage() {
     body = (
       <div className="card">
         <h2>
-          {stage === 'top15_open'
-            ? 'Étape 1 — Coche tes 15 miss pendant les défilés'
-            : 'Étape 2 — Coche les 5 finalistes'}
+          {stage === 'top15_open' ? LABELS.joueur.top15Title : LABELS.joueur.top5Title}
         </h2>
         <div className="progressbar">
           <div style={{ width: `${(Math.min(current.length, max) / max) * 100}%` }} />
         </div>
         <p className="hint">
-          {current.length}/{max} sélectionnées
+          {current.length}/{max} {LABELS.joueur.selectedCount}
         </p>
         {stage === 'top15_open' && (
           <input
@@ -199,7 +198,7 @@ export default function SalonPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="🔍 Rechercher une région…"
+            placeholder={LABELS.joueur.searchPlaceholder}
           />
         )}
         <div className="grid-candidates">
@@ -214,13 +213,13 @@ export default function SalonPage() {
           ))}
         </div>
         <button className="secondary" onClick={() => randomComplete(max, activePool)}>
-          🎲 Compléter au hasard
+          {LABELS.joueur.randomButton}
         </button>
         <button
           onClick={() => submitPicks(stage === 'top15_open' ? 'top15' : 'top5', current)}
           disabled={current.length !== max}
         >
-          ✅ VALIDER {stage === 'top15_open' ? 'MON TOP 15' : 'MON TOP 5'}
+          {stage === 'top15_open' ? LABELS.joueur.validateTop15 : LABELS.joueur.validateTop5}
         </button>
       </div>
     );
@@ -228,13 +227,11 @@ export default function SalonPage() {
     const options = realTop5 ?? [];
     body = (
       <div className="card">
-        <h2>👑 Dernière ligne droite — ordonne le top 5</h2>
-        <p className="hint">
-          Les places 4 et 5 ne sont pas ordonnées officiellement : peu importe ton ordre entre elles.
-        </p>
+        <h2>{LABELS.joueur.orderTitle}</h2>
+        <p className="hint">{LABELS.joueur.orderHint}</p>
         {[0, 1, 2, 3, 4].map((slot) => {
-          const medals = ['🥇', '🥈', '🥉', '4ᵉ', '5ᵉ'];
-          const points = ['15 pts', '10 pts', '5 pts', '2,5 pts', '2,5 pts'][slot];
+          const medals = LABELS.joueur.orderMedals;
+          const points = LABELS.joueur.orderPoints[slot];
           return (
             <div className="order-row" key={slot}>
               <span className="medal">{medals[slot]}</span>
@@ -249,7 +246,7 @@ export default function SalonPage() {
                   });
                 }}
               >
-                <option value="">— Choisir —</option>
+                <option value="">{LABELS.joueur.chooseOption}</option>
                 {options.map((c) => {
                   const cand = byId.get(Number(c));
                   return (
@@ -264,7 +261,7 @@ export default function SalonPage() {
           );
         })}
         <button onClick={submitOrder} disabled={orderSelection.length !== 5}>
-          👑 VALIDER MON PODIUM
+          {LABELS.joueur.validateOrder}
         </button>
       </div>
     );
@@ -277,7 +274,7 @@ export default function SalonPage() {
   return (
     <main className="container">
       <div className="logo" style={{ fontSize: 20, padding: '16px 0 4px' }}>
-        👑 MISS PRONOS · {state.code}
+        {LABELS.app.title} · {state.code}
       </div>
       <div className="stage-tabs">
         {STAGE_ORDER.map((s, i) => (
@@ -289,17 +286,17 @@ export default function SalonPage() {
 
       {stage === 'top15_open' && (
         <p className="hint" style={{ textAlign: 'center' }}>
-          👥 {state.counts.top15}/{state.counts.players} amis ont validé leurs 15 miss
+          {LABELS.joueur.countsTop15(state.counts.top15, state.counts.players)}
         </p>
       )}
       {stage === 'top5_open' && (
         <p className="hint" style={{ textAlign: 'center' }}>
-          👥 {state.counts.top5}/{state.counts.players} amis ont validé leur top 5
+          {LABELS.joueur.countsTop5(state.counts.top5, state.counts.players)}
         </p>
       )}
       {stage === 'final_open' && (
         <p className="hint" style={{ textAlign: 'center' }}>
-          👥 {state.counts.order}/{state.counts.players} amis ont validé leur podium
+          {LABELS.joueur.countsOrder(state.counts.order, state.counts.players)}
         </p>
       )}
 
@@ -311,7 +308,7 @@ export default function SalonPage() {
       {state.isAdmin && (
         <p style={{ textAlign: 'center', marginTop: 16 }}>
           <a className="link" href={`/admin/${code}`}>
-            🎛️ Ouvrir la console admin
+            {LABELS.joueur.adminLink}
           </a>
         </p>
       )}
@@ -330,15 +327,16 @@ function RevealScreen({
 }) {
   const stage = state.stage;
   const revealed: Record<string, { label: string; key: string }> = {};
-  if (stage !== 'top15_open') revealed.top15 = { label: 'Top 15', key: 'top15' };
+  if (stage !== 'top15_open') revealed.top15 = { label: LABELS.joueur.revealLabels.top15, key: 'top15' };
   if (['top5_locked', 'final_open', 'final_locked', 'done'].includes(stage))
-    revealed.top5 = { label: 'Top 5', key: 'top5' };
-  if (['final_locked', 'done'].includes(stage)) revealed.order = { label: 'Podium', key: 'order' };
+    revealed.top5 = { label: LABELS.joueur.revealLabels.top5, key: 'top5' };
+  if (['final_locked', 'done'].includes(stage))
+    revealed.order = { label: LABELS.joueur.revealLabels.order, key: 'order' };
 
   return (
     <>
       <div className="card">
-        <h2>🔒 Votes verrouillés — regardez le direct 📺</h2>
+        <h2>{LABELS.joueur.lockedTitle}</h2>
         {Object.values(revealed).map(({ label, key }) => (
           <div key={key} className="picks-list">
             <h2 style={{ marginTop: 12 }}>{label}</h2>
@@ -360,15 +358,15 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
   if (!state.classement.length) return null;
   return (
     <div className="card">
-      <h2>🏆 Classement des amis</h2>
+      <h2>{LABELS.joueur.scoresTitle}</h2>
       <table className="scores">
         <thead>
           <tr>
-            <th>Joueur</th>
-            <th>Top 15</th>
-            <th>Top 5</th>
-            <th>Podium</th>
-            <th>Total</th>
+            <th>{LABELS.joueur.scoresHead.player}</th>
+            <th>{LABELS.joueur.scoresHead.top15}</th>
+            <th>{LABELS.joueur.scoresHead.top5}</th>
+            <th>{LABELS.joueur.scoresHead.order}</th>
+            <th>{LABELS.joueur.scoresHead.total}</th>
           </tr>
         </thead>
         <tbody>
@@ -386,7 +384,7 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
         </tbody>
       </table>
       <p className="hint" style={{ marginTop: 8 }}>
-        Départages : gagnante trouvée → podium complet → top 15 → soumission la plus précoce.
+        {LABELS.joueur.tiebreakHint}
       </p>
     </div>
   );
@@ -418,13 +416,13 @@ function FinalScreen({
   return (
     <>
       <div className="card winner-banner">
-        <h2 style={{ border: 'none' }}>🎉 LA REINE DE LA SOIRÉE 🎉</h2>
+        <h2 style={{ border: 'none' }}>{LABELS.joueur.winnerTitle}</h2>
         <div className="name">👑 {winner?.pseudo ?? '—'} 👑</div>
         <div className="pts">{winner?.score.total ?? 0} points</div>
-        <p className="hint">« Meilleur pronostiqueur de la soirée »</p>
+        <p className="hint">{LABELS.joueur.winnerSubtitle}</p>
       </div>
       <div className="card">
-        <h2>Classement final</h2>
+        <h2>{LABELS.joueur.finalRankingTitle}</h2>
         {classement.map((p) => (
           <div className="ranking-row" key={p.pseudo}>
             <span className="rank">
@@ -432,22 +430,23 @@ function FinalScreen({
             </span>
             <span>{p.pseudo}</span>
             <span className="pts">
-              {p.score.total} pts{state.results.top5 && state.revealedPicks[p.pseudo]?.order?.[0] === state.results.top5[0] ? ' ✔ gagnante' : ''}
+              {p.score.total} pts{state.results.top5 && state.revealedPicks[p.pseudo]?.order?.[0] === state.results.top5[0] ? ` ${LABELS.joueur.winnerSuffix}` : ''}
             </span>
           </div>
         ))}
       </div>
       <div className="card">
-        <h2>📊 Stats de la soirée</h2>
+        <h2>{LABELS.joueur.statsTitle}</h2>
         <p className="hint">
-          · Région la plus pronostiquée :{' '}
-          {mostPicked ? `${byIdRegion(state, mostPicked[0])} (${mostPicked[1]} picks)` : '—'}
+          {mostPicked
+            ? LABELS.joueur.statsMostPicked(byIdRegion(state, mostPicked[0]), mostPicked[1])
+            : '—'}
         </p>
-        <p className="hint">· Score moyen : {avg} pts</p>
+        <p className="hint">{LABELS.joueur.statsAvg(avg)}</p>
         <p className="hint">
-          · {winnerCount === 1 ? 'Un seul joueur a trouvé la gagnante 👏' : `${winnerCount} joueurs ont trouvé la gagnante`}
+          {winnerCount === 1 ? LABELS.joueur.statsOneWinner : LABELS.joueur.statsWinners(winnerCount)}
         </p>
-        <p className="hint">· Podium réel : {regions(state.results.top5?.slice(0, 3))}</p>
+        <p className="hint">{LABELS.joueur.statsPodium(regions(state.results.top5?.slice(0, 3)))}</p>
       </div>
     </>
   );

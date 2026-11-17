@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, setToken } from '@/lib/client';
+import { LABELS } from '@/lib/labels';
 
 export default function Home() {
   const router = useRouter();
@@ -41,45 +42,45 @@ export default function Home() {
 
   return (
     <main className="container">
-      <div className="logo">👑 MISS PRONOS 👑</div>
-      <p className="tagline">« Qui connaît vraiment la couronne ? »</p>
+      <div className="logo">{LABELS.app.title}</div>
+      <p className="tagline">{LABELS.app.tagline}</p>
 
       <div className="card">
-        <h2>✨ Créer un salon (admin)</h2>
-        <label>Ton pseudo</label>
+        <h2>{LABELS.accueil.createTitle}</h2>
+        <label>{LABELS.accueil.pseudoLabel}</label>
         <input
           type="text"
           value={pseudo}
           onChange={(e) => setPseudo(e.target.value)}
-          placeholder="Ex : Léa"
+          placeholder={LABELS.accueil.pseudoPlaceholder}
           maxLength={30}
         />
         <button onClick={createSalon} disabled={busy || !pseudo.trim()}>
-          CRÉER LE SALON →
+          {LABELS.accueil.createButton}
         </button>
       </div>
 
       <div className="card">
-        <h2>🎉 Rejoindre la soirée</h2>
-        <label>Code du salon</label>
+        <h2>{LABELS.accueil.joinTitle}</h2>
+        <label>{LABELS.accueil.codeLabel}</label>
         <input
           type="text"
           value={joinCode}
           onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-          placeholder="Ex : K7XM2"
+          placeholder={LABELS.accueil.codePlaceholder}
           maxLength={5}
           style={{ textTransform: 'uppercase', letterSpacing: 4 }}
         />
-        <label>Ton pseudo</label>
+        <label>{LABELS.accueil.pseudoLabel}</label>
         <input
           type="text"
           value={joinPseudo}
           onChange={(e) => setJoinPseudo(e.target.value)}
-          placeholder="Ex : Karim"
+          placeholder={LABELS.accueil.pseudoPlaceholder}
           maxLength={30}
         />
         <button onClick={joinSalon} disabled={busy || !joinCode.trim() || !joinPseudo.trim()}>
-          REJOINDRE →
+          {LABELS.accueil.joinButton}
         </button>
       </div>
 
