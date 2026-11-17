@@ -21,19 +21,21 @@ function assert(cond, label) {
   const code = create.json.code;
   const admin = create.json.token;
 
-  const text = Array.from({ length: 30 }, (_, i) => `Région ${i + 1}`).join('\n');
-  const add = await api(`/api/salons/${code}/admin`, { token: admin, action: 'addCandidates', text });
-  assert(add.status === 200 && add.json.added === 30, '30 candidates importées');
+  let st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
+  assert(st.stage === 'top15_open', 'étape top15 ouverte');
+  assert(st.candidates.length === 31, '31 candidates Miss France 2027 préchargées');
+
+  const add = await api(`/api/salons/${code}/admin`, { token: admin, action: 'addCandidates', text: 'Test' });
+  assert(add.status === 200 && add.json.added === 1, 'ajout manuel d’une région possible');
 
   const karim = await api(`/api/salons/${code}/join`, { pseudo: 'Karim' });
   const sofia = await api(`/api/salons/${code}/join`, { pseudo: 'Sofia' });
   assert(karim.status === 200 && sofia.status === 200, '2 amis ont rejoint');
 
-  let st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
-  assert(st.stage === 'top15_open', 'étape top15 ouverte');
-  assert(st.candidates.length === 30, '30 candidates visibles');
+  st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
+  assert(st.candidates.length === 32, '32 candidates au total');
 
-  const cands = st.candidates.slice().sort((a, b) => a.number - b.number);
+  const cands = st.candidates.slice().sort((a, b) => a.id - b.id);
   const real15 = cands.slice(0, 15).map((c) => String(c.id));
   const others = cands.slice(15).map((c) => String(c.id));
 

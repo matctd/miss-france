@@ -15,9 +15,9 @@ export default function AdminPage() {
   const [state, setState] = useState<StateResponse | null>(null);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  const [top15Input, setTop15Input] = useState('');
-  const [top5Input, setTop5Input] = useState('');
-  const [podiumInput, setPodiumInput] = useState('');
+  const [top15Sel, setTop15Sel] = useState('');
+  const [top5Sel, setTop5Sel] = useState('');
+  const [podiumSel, setPodiumSel] = useState('');
   const [candidatesText, setCandidatesText] = useState('');
 
   useEffect(() => {
@@ -79,48 +79,53 @@ export default function AdminPage() {
     resStage,
     max,
     label,
-    placeholder,
     saved,
-    saveLabel,
+    addLabel,
+    chooseLabel,
     savedLabel,
-    input,
-    setInput,
+    selected,
+    setSelected,
+    candidates,
   }: {
     resStage: 'top15' | 'top5' | 'podium';
     max: number;
     label: string;
-    placeholder: string;
     saved: string[];
-    saveLabel: string;
+    addLabel: string;
+    chooseLabel: string;
     savedLabel: (regions: string) => string;
-    input: string;
-    setInput: (v: string) => void;
+    selected: string;
+    setSelected: (v: string) => void;
+    candidates: StateResponse['candidates'];
   }) {
     const complete = saved.length === max;
+    const available = candidates.filter((c) => !saved.includes(String(c.id)));
     return (
       <div className="admin-section">
         <label>{label}</label>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={placeholder}
-        />
+        <select value={selected} onChange={(e) => setSelected(e.target.value)} disabled={complete}>
+          <option value="">{chooseLabel}</option>
+          {available.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.region}
+            </option>
+          ))}
+        </select>
         <button
           className="small"
-          disabled={complete || !input.trim()}
+          disabled={complete || !selected}
           onClick={() =>
             act(
               {
                 action: 'setResults',
                 stage: resStage,
-                ids: input.split(',').map((s) => s.trim()).filter(Boolean),
+                ids: [...saved, selected],
               },
               LABELS.admin.resultsSaved(resStage === 'podium' ? 'Podium' : resStage === 'top15' ? 'Top 15' : 'Top 5')
-            ).then(() => setInput(''))
+            ).then(() => setSelected(''))
           }
         >
-          {saved.length > 0 ? `➕ ${saveLabel} (${saved.length}/${max})` : saveLabel}
+          {complete ? `✔ ${saved.length}/${max}` : `➕ ${addLabel} (${saved.length}/${max})`}
         </button>
         {saved.length > 0 && (
           <>
@@ -175,36 +180,39 @@ export default function AdminPage() {
           resStage="top15"
           max={15}
           label={LABELS.admin.top15Label}
-          placeholder={LABELS.admin.top15Placeholder}
           saved={top15}
-          saveLabel={LABELS.admin.top15Save}
+          addLabel={LABELS.admin.top15Save}
+          chooseLabel={LABELS.admin.chooseMiss}
           savedLabel={LABELS.admin.top15Saved}
-          input={top15Input}
-          setInput={setTop15Input}
+          selected={top15Sel}
+          setSelected={setTop15Sel}
+          candidates={state.candidates}
         />
 
         <ResultsBlock
           resStage="top5"
           max={5}
           label={LABELS.admin.top5Label}
-          placeholder={LABELS.admin.top5Placeholder}
           saved={top5}
-          saveLabel={LABELS.admin.top5Save}
+          addLabel={LABELS.admin.top5Save}
+          chooseLabel={LABELS.admin.chooseMiss}
           savedLabel={LABELS.admin.top5Saved}
-          input={top5Input}
-          setInput={setTop5Input}
+          selected={top5Sel}
+          setSelected={setTop5Sel}
+          candidates={state.candidates}
         />
 
         <ResultsBlock
           resStage="podium"
           max={5}
           label={LABELS.admin.podiumLabel}
-          placeholder={LABELS.admin.podiumPlaceholder}
           saved={podium}
-          saveLabel={LABELS.admin.podiumSave}
+          addLabel={LABELS.admin.podiumSave}
+          chooseLabel={LABELS.admin.chooseMiss}
           savedLabel={LABELS.admin.podiumSaved}
-          input={podiumInput}
-          setInput={setPodiumInput}
+          selected={podiumSel}
+          setSelected={setPodiumSel}
+          candidates={state.candidates}
         />
       </div>
 
@@ -215,7 +223,7 @@ export default function AdminPage() {
           rows={6}
           value={candidatesText}
           onChange={(e) => setCandidatesText(e.target.value)}
-          placeholder={'Île-de-France\nAuvergne-Rhône-Alpes\nNormandie'}
+          placeholder={'Alsace\nAuvergne\nNormandie'}
         />
         <button className="small" onClick={() => act({ action: 'addCandidates', text: candidatesText }, LABELS.admin.importMsg)}>
           {LABELS.admin.importButton}
@@ -223,7 +231,7 @@ export default function AdminPage() {
         <div style={{ marginTop: 12 }}>
           {state.candidates.map((c) => (
             <span className="chip" key={c.id}>
-              {c.id} · {c.region}
+              {c.region}
             </span>
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, newSalonCode, newToken } from '@/lib/db';
+import { DEFAULT_CANDIDATES } from '@/lib/candidates';
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -11,5 +12,7 @@ export async function POST(request: Request) {
   const adminToken = newToken();
   const salonId = db.prepare('INSERT INTO salons (code) VALUES (?)').run(code).lastInsertRowid as number;
   db.prepare('INSERT INTO amis (salon_id, pseudo, token, is_admin) VALUES (?, ?, ?, 1)').run(salonId, pseudo, adminToken);
+  const insertCandidate = db.prepare('INSERT INTO candidates (salon_id, region) VALUES (?, ?)');
+  for (const region of DEFAULT_CANDIDATES) insertCandidate.run(salonId, region);
   return NextResponse.json({ code, token: adminToken, isAdmin: true });
 }
