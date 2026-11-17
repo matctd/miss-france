@@ -190,7 +190,6 @@ button.small {
 .candidate {
   display: flex;
   align-items: center;
-  gap: 10px;
   background: var(--panel-2);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -203,18 +202,6 @@ button.small {
 .candidate.checked {
   border-color: var(--gold);
   background: #33245c;
-}
-
-.candidate .num {
-  font-weight: 800;
-  color: var(--gold);
-  min-width: 28px;
-}
-
-.candidate .region {
-  color: var(--muted);
-  font-size: 12px;
-  display: block;
 }
 
 .order-row {

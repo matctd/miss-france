@@ -22,7 +22,6 @@ export default function AdminPage() {
   const [state, setState] = useState<StateResponse | null>(null);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  const [minutes, setMinutes] = useState(20);
   const [top15Input, setTop15Input] = useState('');
   const [top5Input, setTop5Input] = useState('');
   const [candidatesText, setCandidatesText] = useState('');
@@ -74,12 +73,11 @@ export default function AdminPage() {
 
   const byId = new Map(state.candidates.map((c) => [String(c.id), c]));
   const stage = state.stage;
-  const isOpen = stage.endsWith('_open');
   const hasTop15 = Boolean(state.results.top15);
   const hasTop5 = Boolean(state.results.top5);
 
   function namesOf(ids: string[] | undefined): string {
-    return (ids ?? []).map((id) => byId.get(id)?.name ?? '?').join(', ');
+    return (ids ?? []).map((id) => byId.get(id)?.region ?? '?').join(', ');
   }
 
   return (
@@ -89,20 +87,14 @@ export default function AdminPage() {
       </div>
       <div className="card">
         <h2>{STAGE_TEXT[stage] ?? stage}</h2>
-        {isOpen && (
-          <>
-            <label>Verrouillage automatique de secours (minutes après ouverture)</label>
-            <input type="number" value={minutes} min={1} max={120} onChange={(e) => setMinutes(Number(e.target.value))} />
-          </>
-        )}
         {stage === 'top15_open' && (
           <button onClick={() => act({ action: 'lock' }, '🔒 Top 15 verrouillé')}>🔒 VERROUILLER MAINTENANT</button>
         )}
         {stage === 'top15_locked' && (
-          <button onClick={() => act({ action: 'open', stage: 'top5', minutes }, 'Fenêtre Top 5 ouverte')}>▶️ OUVRIR LA FENÊTRE TOP 5</button>
+          <button onClick={() => act({ action: 'open', stage: 'top5' }, 'Fenêtre Top 5 ouverte')}>▶️ OUVRIR LA FENÊTRE TOP 5</button>
         )}
         {stage === 'top5_locked' && (
-          <button onClick={() => act({ action: 'open', stage: 'final', minutes }, 'Fenêtre Classement ouverte')}>▶️ OUVRIR LA FENÊTRE CLASSEMENT</button>
+          <button onClick={() => act({ action: 'open', stage: 'final' }, 'Fenêtre Classement ouverte')}>▶️ OUVRIR LA FENÊTRE CLASSEMENT</button>
         )}
         {stage === 'final_locked' && (
           <button onClick={() => act({ action: 'finish' }, '🎉 Soirée terminée')}>🏁 TERMINER LA SOIRÉE</button>
@@ -112,12 +104,12 @@ export default function AdminPage() {
 
       <div className="card">
         <h2>📝 Résultats réels (au fil du direct)</h2>
-        <label>Top 15 — IDs des 15 candidates, séparés par des virgules</label>
+        <label>Top 15 — IDs des 15 régions, séparés par des virgules</label>
         <input
           type="text"
           value={top15Input}
           onChange={(e) => setTop15Input(e.target.value)}
-          placeholder="Ex : 4, 11, 7, 22, …"
+          placeholder="Ex : 1, 4, 7, …"
         />
         <button
           className="small"
@@ -137,7 +129,7 @@ export default function AdminPage() {
           type="text"
           value={top5Input}
           onChange={(e) => setTop5Input(e.target.value)}
-          placeholder="Ex : 4, 22, 11, 2, 7"
+          placeholder="Ex : 1, 4, 3, 2, 7"
         />
         <button
           className="small"
@@ -154,43 +146,21 @@ export default function AdminPage() {
       </div>
 
       <div className="card">
-        <h2>⚠️ Désistement</h2>
-        <p className="hint">Retirer une candidate avant le direct : son pick est annulé, sans pénalité pour les joueurs.</p>
-        <select
-          defaultValue=""
-          onChange={(e) => {
-            if (e.target.value) act({ action: 'withdraw', candidateId: Number(e.target.value) }, 'Candidate retirée');
-            e.target.value = '';
-          }}
-        >
-          <option value="">— Choisir une candidate à retirer —</option>
-          {state.candidates
-            .filter((c) => !c.withdrawn)
-            .map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.number} · {c.name}
-              </option>
-            ))}
-        </select>
-      </div>
-
-      <div className="card">
         <h2>👥 Candidates ({state.candidates.length})</h2>
-        <p className="hint">Une ligne par miss, format : numéro | nom | région</p>
+        <p className="hint">Une région par ligne, une ligne par miss.</p>
         <textarea
           rows={6}
           value={candidatesText}
           onChange={(e) => setCandidatesText(e.target.value)}
-          placeholder={'1 | Emma Girard | Île-de-France\n2 | Anaïs Thomas | Auvergne-Rhône-Alpes'}
+          placeholder={'Île-de-France\nAuvergne-Rhône-Alpes\nNormandie'}
         />
         <button className="small" onClick={() => act({ action: 'addCandidates', text: candidatesText }, 'Candidates ajoutées')}>
           Importer
         </button>
         <div style={{ marginTop: 12 }}>
-          {state.candidates.slice(0, 40).map((c) => (
+          {state.candidates.map((c) => (
             <span className="chip" key={c.id}>
-              {c.withdrawn ? '❌ ' : ''}
-              {c.number} {c.name}
+              {c.id} · {c.region}
             </span>
           ))}
         </div>

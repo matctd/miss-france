@@ -23,28 +23,6 @@ function stageIndex(stage: string): number {
   return 3;
 }
 
-function useCountdown(openUntil: string | null, serverNow: string): number | null {
-  const [now, setNow] = useState<number | null>(null);
-  useEffect(() => {
-    if (!openUntil) return;
-    const skew = new Date(serverNow).getTime() - Date.now();
-    const deadline = new Date(openUntil.replace(' ', 'T') + 'Z').getTime();
-    const tick = () => setNow(Math.max(0, deadline - (Date.now() + skew)));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [openUntil, serverNow]);
-  if (!openUntil || now === null) return null;
-  const totalSeconds = Math.floor(now / 1000);
-  return totalSeconds;
-}
-
-function fmt(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
-
 export default function SalonPage() {
   const params = useParams<{ code: string }>();
   const code = (params.code || '').toUpperCase();
@@ -94,9 +72,9 @@ export default function SalonPage() {
     setSearch('');
   }, [myPicksKey, state?.me?.pseudo]);
 
-  function names(ids: string[] | undefined): string {
+  function regions(ids: string[] | undefined): string {
     if (!ids) return '—';
-    return ids.map((id) => byId.get(Number(id))?.name ?? '?').join(', ');
+    return ids.map((id) => byId.get(Number(id))?.region ?? '?').join(', ');
   }
 
   async function join() {
@@ -189,24 +167,17 @@ export default function SalonPage() {
 
   const stage = state.stage;
   const idx = stageIndex(stage);
-  const isOpen = stage.endsWith('_open');
   const realTop15 = state.results.top15;
   const realTop5 = state.results.top5;
 
-  const pool = state.candidates.filter((c) => !c.withdrawn);
-  const top5Pool = realTop15 ? pool.filter((c) => realTop15.includes(String(c.id))) : pool;
-  const filtered = pool.filter(
-    (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      String(c.number).includes(search) ||
-      c.region.toLowerCase().includes(search.toLowerCase())
-  );
+  const top5Pool = realTop15 ? state.candidates.filter((c) => realTop15.includes(String(c.id))) : state.candidates;
+  const filtered = state.candidates.filter((c) => c.region.toLowerCase().includes(search.toLowerCase()));
 
   let body: React.ReactNode = null;
 
   if (stage === 'top15_open' || stage === 'top5_open') {
     const max = stage === 'top15_open' ? 15 : 5;
-    const activePool = stage === 'top15_open' ? pool : top5Pool;
+    const activePool = stage === 'top15_open' ? state.candidates : top5Pool;
     const list = stage === 'top15_open' ? filtered : activePool;
     const current = selection;
     body = (
@@ -228,7 +199,7 @@ export default function SalonPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="🔍 Rechercher une miss (nom, numéro, région)…"
+            placeholder="🔍 Rechercher une région…"
           />
         )}
         <div className="grid-candidates">
@@ -238,11 +209,7 @@ export default function SalonPage() {
               className={`candidate ${current.includes(String(c.id)) ? 'checked' : ''}`}
               onClick={() => toggle(c.id, max)}
             >
-              <span className="num">{c.number}</span>
-              <span>
-                {c.name}
-                <span className="region">{c.region}</span>
-              </span>
+              <span>{c.region}</span>
             </div>
           ))}
         </div>
@@ -287,7 +254,7 @@ export default function SalonPage() {
                   const cand = byId.get(Number(c));
                   return (
                     <option key={c} value={c} disabled={orderSelection.includes(c) && orderSelection[slot] !== c}>
-                      {cand ? `${cand.number} · ${cand.name}` : c}
+                      {cand ? cand.region : c}
                     </option>
                   );
                 })}
@@ -302,11 +269,9 @@ export default function SalonPage() {
       </div>
     );
   } else if (stage === 'done') {
-    body = <FinalScreen state={state} names={names} />;
+    body = <FinalScreen state={state} regions={regions} />;
   } else {
-    body = (
-      <RevealScreen state={state} names={names} me={state.me.pseudo} />
-    );
+    body = <RevealScreen state={state} regions={regions} me={state.me.pseudo} />;
   }
 
   return (
@@ -322,7 +287,6 @@ export default function SalonPage() {
         ))}
       </div>
 
-      {isOpen && <CountdownBanner openUntil={state.openUntil} serverNow={state.serverNow} />}
       {stage === 'top15_open' && (
         <p className="hint" style={{ textAlign: 'center' }}>
           👥 {state.counts.top15}/{state.counts.players} amis ont validé leurs 15 miss
@@ -355,24 +319,13 @@ export default function SalonPage() {
   );
 }
 
-function CountdownBanner({ openUntil, serverNow }: { openUntil: string | null; serverNow: string }) {
-  const secondsLeft = useCountdown(openUntil, serverNow);
-  if (secondsLeft === null) return null;
-  return (
-    <div className="banner">
-      <span>⏳ Fenêtre ouverte</span>
-      <span className="countdown">{fmt(secondsLeft)}</span>
-    </div>
-  );
-}
-
 function RevealScreen({
   state,
-  names,
+  regions,
   me,
 }: {
   state: StateResponse;
-  names: (ids: string[] | undefined) => string;
+  regions: (ids: string[] | undefined) => string;
   me: string;
 }) {
   const stage = state.stage;
@@ -392,7 +345,7 @@ function RevealScreen({
             {Object.entries(state.revealedPicks).map(([pseudo, picks]) => (
               <div className="row" key={pseudo}>
                 <span>{pseudo === me ? `⭐ ${pseudo}` : pseudo}</span>
-                <span className="names">{names(picks[key])}</span>
+                <span className="names">{regions(picks[key])}</span>
               </div>
             ))}
           </div>
@@ -441,10 +394,10 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
 
 function FinalScreen({
   state,
-  names,
+  regions,
 }: {
   state: StateResponse;
-  names: (ids: string[] | undefined) => string;
+  regions: (ids: string[] | undefined) => string;
 }) {
   const classement = state.classement;
   const winner = classement[0];
@@ -487,20 +440,20 @@ function FinalScreen({
       <div className="card">
         <h2>📊 Stats de la soirée</h2>
         <p className="hint">
-          · Miss la plus pronostiquée :{' '}
-          {mostPicked ? `${byIdName(state, mostPicked[0])} (${mostPicked[1]} picks)` : '—'}
+          · Région la plus pronostiquée :{' '}
+          {mostPicked ? `${byIdRegion(state, mostPicked[0])} (${mostPicked[1]} picks)` : '—'}
         </p>
         <p className="hint">· Score moyen : {avg} pts</p>
         <p className="hint">
           · {winnerCount === 1 ? 'Un seul joueur a trouvé la gagnante 👏' : `${winnerCount} joueurs ont trouvé la gagnante`}
         </p>
-        <p className="hint">· Podium réel : {names(state.results.top5?.slice(0, 3))}</p>
+        <p className="hint">· Podium réel : {regions(state.results.top5?.slice(0, 3))}</p>
       </div>
     </>
   );
 }
 
-function byIdName(state: StateResponse, id: string): string {
+function byIdRegion(state: StateResponse, id: string): string {
   const c = state.candidates.find((x) => String(x.id) === id);
-  return c ? c.name : '?';
+  return c ? c.region : '?';
 }
