@@ -430,9 +430,7 @@ function FinalScreen({
               {p.rank === 1 ? '🥇' : p.rank === 2 ? '🥈' : p.rank === 3 ? '🥉' : `${p.rank}.`}
             </span>
             <span>{p.pseudo}</span>
-            <span className="pts">
-              {p.score.total} pts{realWinner && state.revealedPicks[p.pseudo]?.order?.[0] === realWinner ? ` ${LABELS.joueur.winnerSuffix}` : ''}
-            </span>
+            <span className="pts">{p.score.total} pts</span>
           </div>
         ))}
       </div>

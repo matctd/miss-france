@@ -49,7 +49,6 @@ export const LABELS = {
     winnerTitle: '🎉 LA REINE DE LA SOIRÉE 🎉',
     winnerSubtitle: '« Meilleur pronostiqueur de la soirée »',
     finalRankingTitle: 'Classement final',
-    winnerSuffix: '✔ gagnante',
     statsTitle: '📊 Stats de la soirée',
     statsMostPicked: (region: string, n: number) => `· Région la plus pronostiquée : ${region} (${n} picks)`,
     statsAvg: (avg: string) => `· Score moyen : ${avg} pts`,
