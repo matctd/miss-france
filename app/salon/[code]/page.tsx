@@ -34,8 +34,9 @@ export default function SalonPage() {
   const [info, setInfo] = useState('');
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<string[]>([]);
-  const [orderSelection, setOrderSelection] = useState<string[]>([]);
+  const [orderRanks, setOrderRanks] = useState<Record<string, string>>({});
   const [joinPseudo, setJoinPseudo] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setTok(getToken(code));
@@ -69,9 +70,13 @@ export default function SalonPage() {
   useEffect(() => {
     if (!myPicksKey || !state?.me) return;
     setSelection(state.me.picks[myPicksKey] ?? []);
-    setOrderSelection(state.me.picks.order ?? []);
     setSearch('');
   }, [myPicksKey, state?.me?.pseudo]);
+
+  useEffect(() => {
+    if (!state?.stage.startsWith('final') || !state?.me) return;
+    setOrderRanks(Object.fromEntries((state.me.picks.order ?? []).map((id, i) => [id, String(i + 1)])));
+  }, [state?.stage, state?.me?.pseudo]);
 
   function regions(ids: string[] | undefined): string {
     if (!ids) return '—';
@@ -120,14 +125,24 @@ export default function SalonPage() {
     }
   }
 
-  async function submitOrder() {
+  async function submitOrder(ordered: string[]) {
     setError('');
     try {
-      await api(`/api/salons/${code}/picks`, { token, stage: 'order', data: orderSelection });
+      await api(`/api/salons/${code}/picks`, { token, stage: 'order', data: ordered });
       setInfo(LABELS.joueur.savedOrder);
       refresh();
     } catch (e) {
       setError((e as Error).message);
+    }
+  }
+
+  async function copyInvite() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/salon/${code}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setError(LABELS.joueur.copyError);
     }
   }
 
@@ -154,7 +169,7 @@ export default function SalonPage() {
             type="text"
             value={joinPseudo}
             onChange={(e) => setJoinPseudo(e.target.value)}
-            placeholder="Ex : Léa"
+            placeholder={LABELS.accueil.pseudoPlaceholder}
             maxLength={30}
           />
           <button onClick={join} disabled={!joinPseudo.trim()}>
@@ -225,42 +240,50 @@ export default function SalonPage() {
     );
   } else if (stage === 'final_open') {
     const options = realTop5 ?? [];
+    const medals = LABELS.joueur.orderMedals;
+    const points = LABELS.joueur.orderPoints;
+    const ranksAssigned = Object.keys(orderRanks).length === 5;
     body = (
       <div className="card">
         <h2>{LABELS.joueur.orderTitle}</h2>
         <p className="hint">{LABELS.joueur.orderHint}</p>
-        {[0, 1, 2, 3, 4].map((slot) => {
-          const medals = LABELS.joueur.orderMedals;
-          const points = LABELS.joueur.orderPoints[slot];
+        {options.map((c) => {
+          const cand = byId.get(Number(c));
           return (
-            <div className="order-row" key={slot}>
-              <span className="medal">{medals[slot]}</span>
+            <div className="order-row" key={c}>
+              <span className="names">{cand ? cand.region : c}</span>
               <select
-                value={orderSelection[slot] ?? ''}
+                value={orderRanks[c] ?? ''}
                 onChange={(e) => {
                   const val = e.target.value;
-                  setOrderSelection((prev) => {
-                    const next = [...prev];
-                    next[slot] = val;
-                    return next.filter(Boolean);
+                  setOrderRanks((prev) => {
+                    const next = { ...prev };
+                    if (val) next[c] = val;
+                    else delete next[c];
+                    return next;
                   });
                 }}
               >
-                <option value="">{LABELS.joueur.chooseOption}</option>
-                {options.map((c) => {
-                  const cand = byId.get(Number(c));
+                <option value="">{LABELS.joueur.choosePosition}</option>
+                {medals.map((m, i) => {
+                  const pos = String(i + 1);
+                  const takenByOther = Object.entries(orderRanks).some(([id, r]) => id !== c && r === pos);
                   return (
-                    <option key={c} value={c} disabled={orderSelection.includes(c) && orderSelection[slot] !== c}>
-                      {cand ? cand.region : c}
+                    <option key={pos} value={pos} disabled={takenByOther}>
+                      {`${m} — ${points[i]}`}
                     </option>
                   );
                 })}
               </select>
-              <span className="chip">{points}</span>
             </div>
           );
         })}
-        <button onClick={submitOrder} disabled={orderSelection.length !== 5}>
+        <button
+          onClick={() =>
+            submitOrder(Object.entries(orderRanks).sort((a, b) => Number(a[1]) - Number(b[1])).map(([id]) => id))
+          }
+          disabled={!ranksAssigned}
+        >
           {LABELS.joueur.validateOrder}
         </button>
       </div>
@@ -301,6 +324,13 @@ export default function SalonPage() {
       )}
 
       {body}
+
+      <p style={{ textAlign: 'center', marginTop: 12 }}>
+        <button className="small" onClick={copyInvite}>
+          {LABELS.joueur.copyInvite}
+        </button>
+        {copied && <span className="success" style={{ marginLeft: 8 }}>{LABELS.joueur.inviteCopied}</span>}
+      </p>
 
       {info && <p className="success" style={{ textAlign: 'center' }}>{info}</p>}
       {error && <p className="error" style={{ textAlign: 'center' }}>{error}</p>}
