@@ -21,7 +21,7 @@ function assert(cond, label) {
   const code = create.json.code;
   const admin = create.json.token;
 
-  const text = Array.from({ length: 30 }, (_, i) => `${i + 1} | Miss ${i + 1} | Région ${i + 1}`).join('\n');
+  const text = Array.from({ length: 30 }, (_, i) => `Région ${i + 1}`).join('\n');
   const add = await api(`/api/salons/${code}/admin`, { token: admin, action: 'addCandidates', text });
   assert(add.status === 200 && add.json.added === 30, '30 candidates importées');
 
@@ -58,7 +58,7 @@ function assert(cond, label) {
   const noRes = await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5', minutes: 20 });
   assert(noRes.status === 409, 'ouverture top5 bloquée sans résultats top15');
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real15 });
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5', minutes: 20 });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'top5_open', 'fenêtre top5 ouverte');
 
@@ -73,7 +73,7 @@ function assert(cond, label) {
 
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'lock' });
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top5', ids: real5 });
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'final', minutes: 15 });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'final' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'final_open', 'fenêtre classement ouverte');
 

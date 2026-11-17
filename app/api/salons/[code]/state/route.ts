@@ -21,9 +21,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ code
   const me = token ? amis.find((a) => a.token === token) : undefined;
   const isAdmin = Boolean(me?.is_admin);
 
-  const candidates = (
-    db.prepare('SELECT * FROM candidates WHERE salon_id = ? ORDER BY number').all(salon.id) as any[]
-  ).filter((c) => isAdmin || !c.withdrawn);
+  const candidates = db
+    .prepare('SELECT * FROM candidates WHERE salon_id = ? ORDER BY id')
+    .all(salon.id) as any[];
 
   const picksRows = db
     .prepare(
@@ -85,8 +85,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ code
   return NextResponse.json({
     code: salon.code,
     stage,
-    openUntil: salon.open_until,
-    serverNow: new Date().toISOString(),
     isAdmin,
     me: me ? { pseudo: me.pseudo, picks: picksByAmi.get(me.id) || {} } : null,
     candidates,

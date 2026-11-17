@@ -25,9 +25,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
   if (!SIZES[stage] || OPEN_STAGES[stage] !== salon.stage) {
     return NextResponse.json({ error: 'Cette étape n’est pas ouverte' }, { status: 409 });
   }
-  if (salon.open_until && Date.now() > new Date(salon.open_until.replace(' ', 'T') + 'Z').getTime()) {
-    return NextResponse.json({ error: 'Fenêtre expirée' }, { status: 409 });
-  }
   const data = Array.isArray(body?.data) ? body.data : [];
   const distinct = new Set(data.map(String));
   if (distinct.size !== SIZES[stage] || data.length !== SIZES[stage]) {
@@ -35,9 +32,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
   }
   const placeholders = data.map(() => '?').join(',');
   const valid = db
-    .prepare(
-      `SELECT id FROM candidates WHERE salon_id = ? AND withdrawn = 0 AND id IN (${placeholders})`
-    )
+    .prepare(`SELECT id FROM candidates WHERE salon_id = ? AND id IN (${placeholders})`)
     .all(salon.id, ...data.map(String)) as any[];
   if (valid.length !== SIZES[stage]) {
     return NextResponse.json({ error: 'Certaines miss sont invalides' }, { status: 400 });

@@ -15,16 +15,12 @@ CREATE TABLE IF NOT EXISTS salons (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   code TEXT UNIQUE NOT NULL,
   stage TEXT NOT NULL DEFAULT 'top15_open',
-  open_until TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE TABLE IF NOT EXISTS candidates (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   salon_id INTEGER NOT NULL REFERENCES salons(id),
-  number INTEGER NOT NULL,
-  name TEXT NOT NULL,
-  region TEXT NOT NULL DEFAULT '',
-  withdrawn INTEGER NOT NULL DEFAULT 0
+  region TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS amis (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,13 +51,6 @@ export type SalonRow = {
   id: number;
   code: string;
   stage: Stage;
-  open_until: string | null;
-};
-
-const LOCKED: Record<string, Stage> = {
-  top15_open: 'top15_locked',
-  top5_open: 'top5_locked',
-  final_open: 'final_locked',
 };
 
 export function getSalon(code: string): SalonRow | undefined {
@@ -69,10 +58,6 @@ export function getSalon(code: string): SalonRow | undefined {
 }
 
 export function effectiveStage(salon: SalonRow): Stage {
-  if (salon.open_until && salon.stage.endsWith('_open')) {
-    const deadline = new Date(salon.open_until + 'Z').getTime();
-    if (Date.now() > deadline) return LOCKED[salon.stage];
-  }
   return salon.stage;
 }
 

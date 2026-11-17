@@ -16,10 +16,8 @@ Web app de pronostics Miss France entre amis. Chacun sélectionne son top 15 pen
 
 **Anti-triche** :
 - Les picks des autres sont masqués jusqu'au verrouillage de chaque étape (vérifié côté serveur).
-- Toute soumission est refusée après verrouillage ou expiration de la fenêtre.
-- Verrouillage manuel par l'admin + **auto-lock de secours** minuté.
-
-**Désistement** : l'admin peut retirer une candidate avant la soirée ; les picks la concernant ne rapportent rien, sans pénalité.
+- Toute soumission est refusée après verrouillage.
+- Les fenêtres live ne se ferment que par le verrouillage manuel de l'admin.
 
 Le barème complet est centralisé dans [`lib/rules.ts`](lib/rules.ts).
 
@@ -43,9 +41,9 @@ node tests/e2e.mjs  # simulation complète d'une soirée (serveur requis sur :31
 
 ## Déroulé d'une soirée
 
-1. L'admin crée le salon, importe les 30 candidates (`numéro | nom | région`), partage le code
+1. L'admin crée le salon, importe les 30 régions candidates (une région par ligne), partage le code
 2. Les amis rejoignent avec le code + un pseudo
-3. Début du direct : chacun coche ses 15 miss pendant les défilés/portraits
+3. Début du direct : chacun coche ses 15 régions pendant les défilés/portraits
 4. L'admin verrouille juste avant l'annonce → les picks se révèlent, les scores tombent en direct
 5. L'admin saisit le top 15 réel, ouvre la fenêtre top 5 (~15-20 min)
 6. L'admin saisit le top 5 réel (ordre du podium : gagnante, 1re dauphine, 2e dauphine, puis 4e/5e), ouvre la fenêtre classement

@@ -1,11 +1,9 @@
 export type StateResponse = {
   code: string;
   stage: string;
-  openUntil: string | null;
-  serverNow: string;
   isAdmin: boolean;
   me: { pseudo: string; picks: Record<string, string[]> } | null;
-  candidates: { id: number; number: number; name: string; region: string; withdrawn: number }[];
+  candidates: { id: number; region: string }[];
   counts: { players: number; top15: number; top5: number; order: number };
   revealedPicks: Record<string, Record<string, string[]>>;
   results: Record<string, string[]>;

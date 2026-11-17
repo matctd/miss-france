@@ -3,16 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, type StateResponse } from '@/lib/client';
+import { LABELS } from '@/lib/labels';
 
-const STAGE_TEXT: Record<string, string> = {
-  top15_open: 'Étape 1 · Top 15 — OUVERT',
-  top15_locked: 'Étape 1 · Top 15 — verrouillé',
-  top5_open: 'Étape 2 · Top 5 — OUVERT',
-  top5_locked: 'Étape 2 · Top 5 — verrouillé',
-  final_open: 'Étape 3 · Classement — OUVERT',
-  final_locked: 'Étape 3 · Classement — verrouillé',
-  done: 'Soirée terminée',
-};
+const STAGE_TEXT: Record<string, string> = LABELS.admin.stageText;
 
 export default function AdminPage() {
   const params = useParams<{ code: string }>();
@@ -22,7 +15,6 @@ export default function AdminPage() {
   const [state, setState] = useState<StateResponse | null>(null);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  const [minutes, setMinutes] = useState(20);
   const [top15Input, setTop15Input] = useState('');
   const [top5Input, setTop5Input] = useState('');
   const [candidatesText, setCandidatesText] = useState('');
@@ -36,7 +28,7 @@ export default function AdminPage() {
     try {
       const s = await api<StateResponse>(`/api/salons/${code}/state${token ? `?token=${token}` : ''}`);
       setState(s);
-      if (!s.isAdmin) setError('Ce lien n’est pas une console admin (token non admin).');
+      if (!s.isAdmin) setError(LABELS.admin.notAdmin);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -65,8 +57,8 @@ export default function AdminPage() {
   if (!state) {
     return (
       <main className="container">
-        <div className="logo">🎛️ Console admin</div>
-        <p className="tagline">Chargement…</p>
+        <div className="logo">{LABELS.admin.title}</div>
+        <p className="tagline">{LABELS.admin.loading}</p>
         {error && <p className="error">{error}</p>}
       </main>
     );
@@ -74,50 +66,43 @@ export default function AdminPage() {
 
   const byId = new Map(state.candidates.map((c) => [String(c.id), c]));
   const stage = state.stage;
-  const isOpen = stage.endsWith('_open');
   const hasTop15 = Boolean(state.results.top15);
   const hasTop5 = Boolean(state.results.top5);
 
   function namesOf(ids: string[] | undefined): string {
-    return (ids ?? []).map((id) => byId.get(id)?.name ?? '?').join(', ');
+    return (ids ?? []).map((id) => byId.get(id)?.region ?? '?').join(', ');
   }
 
   return (
     <main className="container">
       <div className="logo" style={{ fontSize: 20, padding: '16px 0 4px' }}>
-        🎛️ Console admin · {state.code}
+        {LABELS.admin.title} · {state.code}
       </div>
       <div className="card">
         <h2>{STAGE_TEXT[stage] ?? stage}</h2>
-        {isOpen && (
-          <>
-            <label>Verrouillage automatique de secours (minutes après ouverture)</label>
-            <input type="number" value={minutes} min={1} max={120} onChange={(e) => setMinutes(Number(e.target.value))} />
-          </>
-        )}
         {stage === 'top15_open' && (
-          <button onClick={() => act({ action: 'lock' }, '🔒 Top 15 verrouillé')}>🔒 VERROUILLER MAINTENANT</button>
+          <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockMsg)}>{LABELS.admin.lockButton}</button>
         )}
         {stage === 'top15_locked' && (
-          <button onClick={() => act({ action: 'open', stage: 'top5', minutes }, 'Fenêtre Top 5 ouverte')}>▶️ OUVRIR LA FENÊTRE TOP 5</button>
+          <button onClick={() => act({ action: 'open', stage: 'top5' }, LABELS.admin.openTop5Msg)}>{LABELS.admin.openTop5Button}</button>
         )}
         {stage === 'top5_locked' && (
-          <button onClick={() => act({ action: 'open', stage: 'final', minutes }, 'Fenêtre Classement ouverte')}>▶️ OUVRIR LA FENÊTRE CLASSEMENT</button>
+          <button onClick={() => act({ action: 'open', stage: 'final' }, LABELS.admin.openFinalMsg)}>{LABELS.admin.openFinalButton}</button>
         )}
         {stage === 'final_locked' && (
-          <button onClick={() => act({ action: 'finish' }, '🎉 Soirée terminée')}>🏁 TERMINER LA SOIRÉE</button>
+          <button onClick={() => act({ action: 'finish' }, LABELS.admin.finishMsg)}>{LABELS.admin.finishButton}</button>
         )}
-        {stage === 'done' && <p className="success">La soirée est terminée — classement final visible par tous.</p>}
+        {stage === 'done' && <p className="success">{LABELS.admin.doneText}</p>}
       </div>
 
       <div className="card">
-        <h2>📝 Résultats réels (au fil du direct)</h2>
-        <label>Top 15 — IDs des 15 candidates, séparés par des virgules</label>
+        <h2>{LABELS.admin.resultsTitle}</h2>
+        <label>{LABELS.admin.top15Label}</label>
         <input
           type="text"
           value={top15Input}
           onChange={(e) => setTop15Input(e.target.value)}
-          placeholder="Ex : 4, 11, 7, 22, …"
+          placeholder={LABELS.admin.top15Placeholder}
         />
         <button
           className="small"
@@ -125,19 +110,19 @@ export default function AdminPage() {
           onClick={() =>
             act(
               { action: 'setResults', stage: 'top15', ids: top15Input.split(',').map((s) => s.trim()).filter(Boolean) },
-              '✅ Top 15 réel enregistré'
+              LABELS.admin.resultsSaved('Top 15')
             )
           }
         >
-          {hasTop15 ? `✔ Top 15 saisi : ${namesOf(state.results.top15)}` : 'Enregistrer le top 15'}
+          {hasTop15 ? LABELS.admin.top15Saved(namesOf(state.results.top15)) : LABELS.admin.top15Save}
         </button>
 
-        <label>Top 5 — IDs dans l’ordre : gagnante, 1re dauphine, 2e dauphine, puis les 2 dernières (peu importe l’ordre)</label>
+        <label>{LABELS.admin.top5Label}</label>
         <input
           type="text"
           value={top5Input}
           onChange={(e) => setTop5Input(e.target.value)}
-          placeholder="Ex : 4, 22, 11, 2, 7"
+          placeholder={LABELS.admin.top5Placeholder}
         />
         <button
           className="small"
@@ -145,52 +130,30 @@ export default function AdminPage() {
           onClick={() =>
             act(
               { action: 'setResults', stage: 'top5', ids: top5Input.split(',').map((s) => s.trim()).filter(Boolean) },
-              '✅ Top 5 réel enregistré'
+              LABELS.admin.resultsSaved('Top 5')
             )
           }
         >
-          {hasTop5 ? `✔ Top 5 saisi : ${namesOf(state.results.top5)}` : 'Enregistrer le top 5'}
+          {hasTop5 ? LABELS.admin.top5Saved(namesOf(state.results.top5)) : LABELS.admin.top5Save}
         </button>
       </div>
 
       <div className="card">
-        <h2>⚠️ Désistement</h2>
-        <p className="hint">Retirer une candidate avant le direct : son pick est annulé, sans pénalité pour les joueurs.</p>
-        <select
-          defaultValue=""
-          onChange={(e) => {
-            if (e.target.value) act({ action: 'withdraw', candidateId: Number(e.target.value) }, 'Candidate retirée');
-            e.target.value = '';
-          }}
-        >
-          <option value="">— Choisir une candidate à retirer —</option>
-          {state.candidates
-            .filter((c) => !c.withdrawn)
-            .map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.number} · {c.name}
-              </option>
-            ))}
-        </select>
-      </div>
-
-      <div className="card">
-        <h2>👥 Candidates ({state.candidates.length})</h2>
-        <p className="hint">Une ligne par miss, format : numéro | nom | région</p>
+        <h2>{LABELS.admin.candidatesTitle(state.candidates.length)}</h2>
+        <p className="hint">{LABELS.admin.candidatesHint}</p>
         <textarea
           rows={6}
           value={candidatesText}
           onChange={(e) => setCandidatesText(e.target.value)}
-          placeholder={'1 | Emma Girard | Île-de-France\n2 | Anaïs Thomas | Auvergne-Rhône-Alpes'}
+          placeholder={'Île-de-France\nAuvergne-Rhône-Alpes\nNormandie'}
         />
-        <button className="small" onClick={() => act({ action: 'addCandidates', text: candidatesText }, 'Candidates ajoutées')}>
-          Importer
+        <button className="small" onClick={() => act({ action: 'addCandidates', text: candidatesText }, LABELS.admin.importMsg)}>
+          {LABELS.admin.importButton}
         </button>
         <div style={{ marginTop: 12 }}>
-          {state.candidates.slice(0, 40).map((c) => (
+          {state.candidates.map((c) => (
             <span className="chip" key={c.id}>
-              {c.withdrawn ? '❌ ' : ''}
-              {c.number} {c.name}
+              {c.id} · {c.region}
             </span>
           ))}
         </div>
@@ -200,7 +163,7 @@ export default function AdminPage() {
       {error && <p className="error">{error}</p>}
       <p style={{ textAlign: 'center', marginTop: 16 }}>
         <a className="link" href={`/salon/${code}`}>
-          ← Retour à l’écran joueur
+          {LABELS.admin.backLink}
         </a>
       </p>
     </main>
