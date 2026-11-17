@@ -197,7 +197,7 @@ export default function AdminPage() {
 
         <ResultsBlock
           resStage="podium"
-          max={3}
+          max={5}
           label={LABELS.admin.podiumLabel}
           placeholder={LABELS.admin.podiumPlaceholder}
           saved={podium}

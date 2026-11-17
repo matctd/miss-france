@@ -93,8 +93,9 @@ export const LABELS = {
     top5Placeholder: 'Ex : 1, 4, 3',
     top5Save: 'Ajouter au top 5',
     top5Saved: (regions: string) => `✔ Top 5 en cours : ${regions}`,
-    podiumLabel: 'Podium — IDs dans l’ordre : gagnante, 1re dauphine, 2e dauphine',
-    podiumPlaceholder: 'Ex : 1, 4, 3',
+    podiumLabel:
+      'Classement des 5 finalistes dans l’ordre : gagnante, 1re dauphine, 2e dauphine, puis 4ᵉ et 5ᵉ',
+    podiumPlaceholder: 'Ex : 1, 4, 3, 2, 7',
     podiumSave: 'Enregistrer le podium',
     podiumSaved: (regions: string) => `✔ Podium : ${regions}`,
     resultsSaved: (stage: string) => `✅ ${stage} enregistré`,

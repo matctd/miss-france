@@ -89,7 +89,7 @@ function assert(cond, label) {
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'lock' });
   const noPodium = await api(`/api/salons/${code}/admin`, { token: admin, action: 'finish' });
   assert(noPodium.status === 409, 'fin de soirée bloquée sans podium saisi');
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'podium', ids: [real5[0], real5[1], real5[2]] });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'podium', ids: real5 });
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'finish' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'done', 'soirée terminée');

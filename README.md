@@ -47,7 +47,7 @@ node tests/e2e.mjs  # simulation complète d'une soirée (serveur requis sur :31
 4. L'admin verrouille juste avant l'annonce → les picks se révèlent, les scores tombent en direct
 5. L'admin saisit le top 15 réel au fil des annonces (ajout incrémental), ouvre la fenêtre top 5 (~15-20 min)
 6. L'admin saisit le top 5 réel (l'ordre n'importe pas à cette étape), ouvre la fenêtre classement
-7. Pendant le couronnement, l'admin saisit le podium dans l'ordre (gagnante, 1re dauphine, 2e dauphine), puis verrouille et termine la soirée → classement final + stats
+7. Pendant le couronnement, l'admin saisit le classement des 5 finalistes dans l'ordre (gagnante, 1re dauphine, 2e dauphine, puis 4ᵉ et 5ᵉ — l'ordre officiel des deux dernières n'étant pas annoncé, il est à l'appréciation de l'admin et le score des places 4-5 reste indulgent), puis verrouille et termine la soirée → classement final + stats
 
 ## Déployer
 

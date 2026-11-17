@@ -78,7 +78,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       return NextResponse.json({ error: 'Étape invalide' }, { status: 400 });
     }
     if (resStage === 'podium') {
-      const validated = validateIds(salon.id, body?.ids, 3, 1);
+      const validated = validateIds(salon.id, body?.ids, 5, 1);
       if (typeof validated === 'string') {
         return NextResponse.json({ error: validated }, { status: 400 });
       }
@@ -122,9 +122,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
   if (action === 'finish') {
     const top5 = getResultat(salon.id, 'top5');
     const podium = getResultat(salon.id, 'podium');
-    if (!top5 || top5.length !== 5 || !podium || podium.length !== 3) {
+    if (!top5 || top5.length !== 5 || !podium || podium.length !== 5) {
       return NextResponse.json(
-        { error: 'Saisis d’abord les 5 finalistes et le podium complet' },
+        { error: 'Saisis d’abord les 5 finalistes et le classement complet des 5' },
         { status: 409 }
       );
     }

@@ -40,6 +40,12 @@ test('ordre : une miss hors top 5 aux places 4-5 ne rapporte rien', () => {
   assert.equal(scoreOrder(['c3', 'c9', 'c1', 'c20', 'c21'], REAL_TOP5, PODIUM), 30);
 });
 
+test('ordre : podium saisi sur les 5 places, places 4-5 toujours indulgentes', () => {
+  const podium5 = ['c3', 'c9', 'c1', 'c14', 'c7'];
+  assert.equal(scoreOrder(['c3', 'c9', 'c1', 'c14', 'c7'], REAL_TOP5, podium5), 35);
+  assert.equal(scoreOrder(['c3', 'c9', 'c1', 'c7', 'c14'], REAL_TOP5, podium5), 35);
+});
+
 test('ordre : la gagnante seule rapporte 15', () => {
   assert.equal(scoreOrder(['c3', 'c20', 'c21', 'c22', 'c23'], REAL_TOP5, PODIUM), 15);
 });

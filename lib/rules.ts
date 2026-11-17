@@ -49,7 +49,7 @@ export function scoreOrder(
   podium: string[] | undefined
 ): number {
   if (!order || !realTop5 || !podium) return 0;
-  const nonPodium = realTop5.filter((id) => !podium.includes(id));
+  const nonPodium = realTop5.filter((id) => !podium.slice(0, 3).includes(id));
   let points = 0;
   if (order[0] && order[0] === podium[0]) points += RULES.order.winner;
   if (order[1] && order[1] === podium[1]) points += RULES.order.firstDauphine;
