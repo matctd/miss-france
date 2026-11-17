@@ -41,8 +41,8 @@ node tests/e2e.mjs  # simulation complète d'une soirée (serveur requis sur :31
 
 ## Déroulé d'une soirée
 
-1. L'admin crée le salon — les 31 candidates Miss France 2027 sont préchargées (ajustables dans la console admin) — et partage le code
-2. Les amis rejoignent avec le code + un pseudo
+1. L'admin crée le salon — les 31 candidates Miss France 2027 sont préchargées (ajustables dans la console admin)
+2. L'admin copie le lien d'invitation (bouton sur l'écran salon) et l'envoie à ses amis ; chacun rejoint avec un pseudo
 3. Début du direct : chacun coche ses 15 régions pendant les défilés/portraits
 4. L'admin verrouille juste avant l'annonce → les picks se révèlent, les scores tombent en direct
 5. L'admin saisit le top 15 réel au fil des annonces (ajout incrémental, par région dans une liste déroulante), ouvre la fenêtre top 5 (~15-20 min)

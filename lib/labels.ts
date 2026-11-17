@@ -6,12 +6,11 @@ export const LABELS = {
   accueil: {
     createTitle: '✨ Créer un salon (admin)',
     pseudoLabel: 'Ton pseudo',
+    guestTitle: '🎉 Rejoins la soirée',
+    guestHint: 'Ouvre le lien d’invitation partagé par l’organisateur de ta soirée.',
+    organizerLink: 'Je suis l’organisateur →',
     pseudoPlaceholder: 'Ex : Léa',
     createButton: 'CRÉER LE SALON →',
-    joinTitle: '🎉 Rejoindre la soirée',
-    codeLabel: 'Code du salon',
-    codePlaceholder: 'Ex : K7XM2',
-    joinButton: 'REJOINDRE →',
   },
   joueur: {
     stageTabs: { top15: 'Top 15', top5: 'Top 5', final: 'Classement', done: 'Résultats' },
@@ -57,6 +56,9 @@ export const LABELS = {
     statsWinners: (n: number) => `· ${n} joueurs ont trouvé la gagnante`,
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
+    copyInvite: '🔗 Copier le lien d’invitation',
+    copyError: 'Copie impossible — copie l’adresse de la page manuellement.',
+    inviteCopied: 'Lien copié — envoie-le à tes amis !',
   },
   admin: {
     title: '🎛️ Console admin',

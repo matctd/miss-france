@@ -36,6 +36,7 @@ export default function SalonPage() {
   const [selection, setSelection] = useState<string[]>([]);
   const [orderSelection, setOrderSelection] = useState<string[]>([]);
   const [joinPseudo, setJoinPseudo] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setTok(getToken(code));
@@ -131,6 +132,16 @@ export default function SalonPage() {
     }
   }
 
+  async function copyInvite() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/salon/${code}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setError(LABELS.joueur.copyError);
+    }
+  }
+
   if (!checkedToken) return <main className="container" />;
 
   if (!state) {
@@ -154,7 +165,7 @@ export default function SalonPage() {
             type="text"
             value={joinPseudo}
             onChange={(e) => setJoinPseudo(e.target.value)}
-            placeholder="Ex : Léa"
+            placeholder={LABELS.accueil.pseudoPlaceholder}
             maxLength={30}
           />
           <button onClick={join} disabled={!joinPseudo.trim()}>
@@ -301,6 +312,13 @@ export default function SalonPage() {
       )}
 
       {body}
+
+      <p style={{ textAlign: 'center', marginTop: 12 }}>
+        <button className="small" onClick={copyInvite}>
+          {LABELS.joueur.copyInvite}
+        </button>
+        {copied && <span className="success" style={{ marginLeft: 8 }}>{LABELS.joueur.inviteCopied}</span>}
+      </p>
 
       {info && <p className="success" style={{ textAlign: 'center' }}>{info}</p>}
       {error && <p className="error" style={{ textAlign: 'center' }}>{error}</p>}
