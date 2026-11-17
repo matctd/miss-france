@@ -57,7 +57,10 @@ function assert(cond, label) {
 
   const noRes = await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5', minutes: 20 });
   assert(noRes.status === 409, 'ouverture top5 bloquée sans résultats top15');
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real15 });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real15.slice(0, 8) });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real15.slice(8) });
+  const partial = (await api(`/api/salons/${code}/state?token=${admin}`)).json.results;
+  assert(partial.top15.length === 15, 'saisie incrémentale du top 15 fusionnée (8+7)');
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'top5_open', 'fenêtre top5 ouverte');
@@ -72,7 +75,7 @@ function assert(cond, label) {
   await api(`/api/salons/${code}/picks`, { token: sofia.json.token, stage: 'top5', data: others.slice(0, 5) });
 
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'lock' });
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top5', ids: real5 });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top5', ids: [real5[2], real5[4], real5[0], real5[3], real5[1]] });
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'final' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'final_open', 'fenêtre classement ouverte');
@@ -84,6 +87,9 @@ function assert(cond, label) {
   await api(`/api/salons/${code}/picks`, { token: sofia.json.token, stage: 'order', data: [real5[4], real5[3], real5[2], real5[1], real5[0]] });
 
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'lock' });
+  const noPodium = await api(`/api/salons/${code}/admin`, { token: admin, action: 'finish' });
+  assert(noPodium.status === 409, 'fin de soirée bloquée sans podium saisi');
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'podium', ids: real5 });
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'finish' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'done', 'soirée terminée');

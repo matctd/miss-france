@@ -399,8 +399,9 @@ function FinalScreen({
 }) {
   const classement = state.classement;
   const winner = classement[0];
+  const realWinner = state.results.podium?.[0];
   const winnerCount = classement.filter(
-    (p) => state.results.top5 && p.pseudo && state.revealedPicks[p.pseudo]?.order?.[0] === state.results.top5[0]
+    (p) => realWinner && p.pseudo && state.revealedPicks[p.pseudo]?.order?.[0] === realWinner
   ).length;
 
   const missCounts = new Map<string, number>();
@@ -430,7 +431,7 @@ function FinalScreen({
             </span>
             <span>{p.pseudo}</span>
             <span className="pts">
-              {p.score.total} pts{state.results.top5 && state.revealedPicks[p.pseudo]?.order?.[0] === state.results.top5[0] ? ` ${LABELS.joueur.winnerSuffix}` : ''}
+              {p.score.total} pts{realWinner && state.revealedPicks[p.pseudo]?.order?.[0] === realWinner ? ` ${LABELS.joueur.winnerSuffix}` : ''}
             </span>
           </div>
         ))}
@@ -446,7 +447,7 @@ function FinalScreen({
         <p className="hint">
           {winnerCount === 1 ? LABELS.joueur.statsOneWinner : LABELS.joueur.statsWinners(winnerCount)}
         </p>
-        <p className="hint">{LABELS.joueur.statsPodium(regions(state.results.top5?.slice(0, 3)))}</p>
+        <p className="hint">{LABELS.joueur.statsPodium(regions(state.results.podium))}</p>
       </div>
     </>
   );

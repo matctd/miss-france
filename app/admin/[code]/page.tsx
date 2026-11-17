@@ -17,6 +17,7 @@ export default function AdminPage() {
   const [info, setInfo] = useState('');
   const [top15Input, setTop15Input] = useState('');
   const [top5Input, setTop5Input] = useState('');
+  const [podiumInput, setPodiumInput] = useState('');
   const [candidatesText, setCandidatesText] = useState('');
 
   useEffect(() => {
@@ -66,11 +67,71 @@ export default function AdminPage() {
 
   const byId = new Map(state.candidates.map((c) => [String(c.id), c]));
   const stage = state.stage;
-  const hasTop15 = Boolean(state.results.top15);
-  const hasTop5 = Boolean(state.results.top5);
+  const top15 = state.results.top15 ?? [];
+  const top5 = state.results.top5 ?? [];
+  const podium = state.results.podium ?? [];
 
-  function namesOf(ids: string[] | undefined): string {
-    return (ids ?? []).map((id) => byId.get(id)?.region ?? '?').join(', ');
+  function regionsOf(ids: string[]): string {
+    return ids.map((id) => byId.get(id)?.region ?? '?').join(', ');
+  }
+
+  function ResultsBlock({
+    resStage,
+    max,
+    label,
+    placeholder,
+    saved,
+    saveLabel,
+    savedLabel,
+    input,
+    setInput,
+  }: {
+    resStage: 'top15' | 'top5' | 'podium';
+    max: number;
+    label: string;
+    placeholder: string;
+    saved: string[];
+    saveLabel: string;
+    savedLabel: (regions: string) => string;
+    input: string;
+    setInput: (v: string) => void;
+  }) {
+    const complete = saved.length === max;
+    return (
+      <div className="admin-section">
+        <label>{label}</label>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={placeholder}
+        />
+        <button
+          className="small"
+          disabled={complete || !input.trim()}
+          onClick={() =>
+            act(
+              {
+                action: 'setResults',
+                stage: resStage,
+                ids: input.split(',').map((s) => s.trim()).filter(Boolean),
+              },
+              LABELS.admin.resultsSaved(resStage === 'podium' ? 'Podium' : resStage === 'top15' ? 'Top 15' : 'Top 5')
+            ).then(() => setInput(''))
+          }
+        >
+          {saved.length > 0 ? `➕ ${saveLabel} (${saved.length}/${max})` : saveLabel}
+        </button>
+        {saved.length > 0 && (
+          <>
+            <p className="hint">{savedLabel(regionsOf(saved))}</p>
+            <button className="small secondary danger" onClick={() => act({ action: 'resetResults', stage: resStage }, 'Résultats réinitialisés')}>
+              Réinitialiser
+            </button>
+          </>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -86,8 +147,20 @@ export default function AdminPage() {
         {stage === 'top15_locked' && (
           <button onClick={() => act({ action: 'open', stage: 'top5' }, LABELS.admin.openTop5Msg)}>{LABELS.admin.openTop5Button}</button>
         )}
+        {stage === 'top5_open' && (
+          <>
+            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockTop5Msg)}>{LABELS.admin.lockTop5Button}</button>
+            <p className="hint">Saisis les 5 finalistes ci-dessous pendant l’annonce, puis verrouille.</p>
+          </>
+        )}
         {stage === 'top5_locked' && (
           <button onClick={() => act({ action: 'open', stage: 'final' }, LABELS.admin.openFinalMsg)}>{LABELS.admin.openFinalButton}</button>
+        )}
+        {stage === 'final_open' && (
+          <>
+            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockFinalMsg)}>{LABELS.admin.lockFinalButton}</button>
+            <p className="hint">Saisis le podium ci-dessous pendant le couronnement, puis verrouille.</p>
+          </>
         )}
         {stage === 'final_locked' && (
           <button onClick={() => act({ action: 'finish' }, LABELS.admin.finishMsg)}>{LABELS.admin.finishButton}</button>
@@ -97,45 +170,42 @@ export default function AdminPage() {
 
       <div className="card">
         <h2>{LABELS.admin.resultsTitle}</h2>
-        <label>{LABELS.admin.top15Label}</label>
-        <input
-          type="text"
-          value={top15Input}
-          onChange={(e) => setTop15Input(e.target.value)}
-          placeholder={LABELS.admin.top15Placeholder}
-        />
-        <button
-          className="small"
-          disabled={hasTop15}
-          onClick={() =>
-            act(
-              { action: 'setResults', stage: 'top15', ids: top15Input.split(',').map((s) => s.trim()).filter(Boolean) },
-              LABELS.admin.resultsSaved('Top 15')
-            )
-          }
-        >
-          {hasTop15 ? LABELS.admin.top15Saved(namesOf(state.results.top15)) : LABELS.admin.top15Save}
-        </button>
 
-        <label>{LABELS.admin.top5Label}</label>
-        <input
-          type="text"
-          value={top5Input}
-          onChange={(e) => setTop5Input(e.target.value)}
-          placeholder={LABELS.admin.top5Placeholder}
+        <ResultsBlock
+          resStage="top15"
+          max={15}
+          label={LABELS.admin.top15Label}
+          placeholder={LABELS.admin.top15Placeholder}
+          saved={top15}
+          saveLabel={LABELS.admin.top15Save}
+          savedLabel={LABELS.admin.top15Saved}
+          input={top15Input}
+          setInput={setTop15Input}
         />
-        <button
-          className="small"
-          disabled={hasTop5}
-          onClick={() =>
-            act(
-              { action: 'setResults', stage: 'top5', ids: top5Input.split(',').map((s) => s.trim()).filter(Boolean) },
-              LABELS.admin.resultsSaved('Top 5')
-            )
-          }
-        >
-          {hasTop5 ? LABELS.admin.top5Saved(namesOf(state.results.top5)) : LABELS.admin.top5Save}
-        </button>
+
+        <ResultsBlock
+          resStage="top5"
+          max={5}
+          label={LABELS.admin.top5Label}
+          placeholder={LABELS.admin.top5Placeholder}
+          saved={top5}
+          saveLabel={LABELS.admin.top5Save}
+          savedLabel={LABELS.admin.top5Saved}
+          input={top5Input}
+          setInput={setTop5Input}
+        />
+
+        <ResultsBlock
+          resStage="podium"
+          max={5}
+          label={LABELS.admin.podiumLabel}
+          placeholder={LABELS.admin.podiumPlaceholder}
+          saved={podium}
+          saveLabel={LABELS.admin.podiumSave}
+          savedLabel={LABELS.admin.podiumSaved}
+          input={podiumInput}
+          setInput={setPodiumInput}
+        />
       </div>
 
       <div className="card">
