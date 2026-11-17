@@ -138,7 +138,7 @@ export default function SalonPage() {
     return (
       <main className="container">
         <div className="logo">{LABELS.app.title}</div>
-        <p className="tagline">{LABELS.joueur.loadingSalon} {code}…</p>
+        <p className="tagline">{LABELS.joueur.loadingSalon}…</p>
         {error && <p className="error">{error}</p>}
       </main>
     );
@@ -148,7 +148,7 @@ export default function SalonPage() {
     return (
       <main className="container">
         <div className="logo">{LABELS.app.title}</div>
-        <p className="tagline">{LABELS.joueur.joinHeading} {code} {LABELS.joueur.joinHeadingSuffix}</p>
+        <p className="tagline">{LABELS.joueur.joinHeadingSuffix}</p>
         <div className="card">
           <h2>{LABELS.joueur.joinCardTitle}</h2>
           <input
@@ -297,7 +297,7 @@ export default function SalonPage() {
   return (
     <main className="container">
       <div className="logo" style={{ fontSize: 20, padding: '16px 0 4px' }}>
-        {LABELS.app.title} · {state.code}
+        {LABELS.app.title}
       </div>
       <div className="stage-tabs">
         {STAGE_ORDER.map((s, i) => (
