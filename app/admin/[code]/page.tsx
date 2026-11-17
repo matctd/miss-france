@@ -17,13 +17,21 @@ export default function AdminPage() {
   const [info, setInfo] = useState('');
   const [top15Sel, setTop15Sel] = useState('');
   const [top5Sel, setTop5Sel] = useState('');
-  const [podiumSel, setPodiumSel] = useState('');
+  const [podiumRanks, setPodiumRanks] = useState<Record<string, string>>({});
   const [candidatesText, setCandidatesText] = useState('');
 
   useEffect(() => {
     setTok(getToken(code));
     setChecked(true);
   }, [code]);
+
+  useEffect(() => {
+    const saved = state?.results.podium ?? [];
+    setPodiumRanks((prev) => {
+      if (Object.keys(prev).length > 0 || saved.length === 0) return prev;
+      return Object.fromEntries(saved.map((id, i) => [id, String(i + 1)]));
+    });
+  }, [state?.results.podium]);
 
   const refresh = useCallback(async () => {
     try {
@@ -72,10 +80,17 @@ export default function AdminPage() {
   const podium = state.results.podium ?? [];
   const top15Pool = state.candidates;
   const top5Pool = state.candidates.filter((c) => top15.includes(String(c.id)));
-  const podiumPool = state.candidates.filter((c) => top5.includes(String(c.id)));
 
   function regionsOf(ids: string[]): string {
     return ids.map((id) => byId.get(id)?.region ?? '?').join(', ');
+  }
+
+  async function savePodium() {
+    const ordered = top5
+      .filter((id) => podiumRanks[id])
+      .sort((a, b) => Number(podiumRanks[a]) - Number(podiumRanks[b]));
+    if (ordered.length !== 5) return;
+    await act({ action: 'setResults', stage: 'podium', ids: ordered }, LABELS.admin.resultsSaved('Podium'));
   }
 
   function ResultsBlock({
@@ -212,19 +227,54 @@ export default function AdminPage() {
           emptyPoolHint={LABELS.admin.top5NeedTop15}
         />
 
-        <ResultsBlock
-          resStage="podium"
-          max={5}
-          label={LABELS.admin.podiumLabel}
-          saved={podium}
-          addLabel={LABELS.admin.podiumSave}
-          chooseLabel={LABELS.admin.chooseMiss}
-          savedLabel={LABELS.admin.podiumSaved}
-          selected={podiumSel}
-          setSelected={setPodiumSel}
-          candidates={podiumPool}
-          emptyPoolHint={LABELS.admin.podiumNeedTop5}
-        />
+        {top5.length === 5 ? (
+          <div className="admin-section">
+            <label>{LABELS.admin.podiumLabel}</label>
+            <p className="hint">{LABELS.admin.podiumHint}</p>
+            {top5.map((id) => (
+              <div className="order-row" key={id}>
+                <span className="names">{byId.get(id)?.region ?? id}</span>
+                <select
+                  value={podiumRanks[id] ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPodiumRanks((prev) => {
+                      const next = { ...prev };
+                      if (val) next[id] = val;
+                      else delete next[id];
+                      return next;
+                    });
+                  }}
+                >
+                  <option value="">{LABELS.admin.podiumChoosePosition}</option>
+                  {LABELS.admin.podiumPositions.map((lbl, i) => {
+                    const pos = String(i + 1);
+                    const takenByOther = top5.some((cid) => cid !== id && podiumRanks[cid] === pos);
+                    return (
+                      <option key={pos} value={pos} disabled={takenByOther}>
+                        {lbl}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            ))}
+            <button onClick={savePodium} disabled={top5.filter((cid) => podiumRanks[cid]).length !== 5}>
+              {LABELS.admin.podiumSave}
+            </button>
+            <button
+              className="small secondary danger"
+              onClick={() => act({ action: 'resetResults', stage: 'podium' }, 'Résultats réinitialisés').then(() => setPodiumRanks({}))}
+            >
+              Réinitialiser
+            </button>
+          </div>
+        ) : (
+          <div className="admin-section">
+            <label>{LABELS.admin.podiumLabel}</label>
+            <p className="hint">{LABELS.admin.podiumNeedTop5}</p>
+          </div>
+        )}
       </div>
 
       <div className="card">
