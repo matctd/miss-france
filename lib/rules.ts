@@ -1,0 +1,103 @@
+export type Stage =
+  | 'top15_open'
+  | 'top15_locked'
+  | 'top5_open'
+  | 'top5_locked'
+  | 'final_open'
+  | 'final_locked'
+  | 'done';
+
+export const RULES = {
+  top15: { perMiss: 2, size: 15 },
+  top5: { perFinalist: 6, size: 5 },
+  order: { winner: 15, firstDauphine: 10, secondDauphine: 5, fourthOrFifth: 2.5 },
+  maxTotal: 95,
+};
+
+export type Picks = {
+  top15?: string[];
+  top5?: string[];
+  order?: string[];
+};
+
+export type Results = {
+  top15?: string[];
+  top5?: string[];
+};
+
+export type PlayerScore = {
+  top15: number;
+  top5: number;
+  order: number;
+  total: number;
+};
+
+export function scoreTop15(picks: string[] | undefined, realTop15: string[] | undefined): number {
+  if (!picks || !realTop15) return 0;
+  return picks.filter((id) => realTop15.includes(id)).length * RULES.top15.perMiss;
+}
+
+export function scoreTop5(picks: string[] | undefined, realTop5: string[] | undefined): number {
+  if (!picks || !realTop5) return 0;
+  return picks.filter((id) => realTop5.includes(id)).length * RULES.top5.perFinalist;
+}
+
+export function scoreOrder(order: string[] | undefined, realTop5: string[] | undefined): number {
+  if (!order || !realTop5) return 0;
+  const podium = realTop5.slice(0, 3);
+  const nonPodium = realTop5.slice(3);
+  let points = 0;
+  if (order[0] && order[0] === podium[0]) points += RULES.order.winner;
+  if (order[1] && order[1] === podium[1]) points += RULES.order.firstDauphine;
+  if (order[2] && order[2] === podium[2]) points += RULES.order.secondDauphine;
+  for (const slot of order.slice(3)) {
+    if (slot && nonPodium.includes(slot)) points += RULES.order.fourthOrFifth;
+  }
+  return points;
+}
+
+export function scorePlayer(picks: Picks, results: Results): PlayerScore {
+  const top15 = scoreTop15(picks.top15, results.top15);
+  const top5 = scoreTop5(picks.top5, results.top5);
+  const order = scoreOrder(picks.order, results.top5);
+  return { top15, top5, order, total: top15 + top5 + order };
+}
+
+export type RankedPlayer = {
+  pseudo: string;
+  score: PlayerScore;
+  rank: number;
+  tiebreak: number[];
+};
+
+export function rankPlayers(
+  players: { pseudo: string; picks: Picks; earliestSubmittedAt: number }[],
+  results: Results
+): RankedPlayer[] {
+  const realTop5 = results.top5;
+  const podium = realTop5 ? realTop5.slice(0, 3) : [];
+  const scored = players.map((p) => {
+    const score = scorePlayer(p.picks, results);
+    const winnerFound = podium.length > 0 && p.picks.order?.[0] === podium[0] ? 1 : 0;
+    const podiumComplete =
+      podium.length === 3 &&
+      p.picks.order?.[0] === podium[0] &&
+      p.picks.order?.[1] === podium[1] &&
+      p.picks.order?.[2] === podium[2]
+        ? 1
+        : 0;
+    const tiebreak = [winnerFound, podiumComplete, score.top15, -p.earliestSubmittedAt];
+    return { pseudo: p.pseudo, score, tiebreak, rank: 0 };
+  });
+  scored.sort((a, b) => {
+    if (b.score.total !== a.score.total) return b.score.total - a.score.total;
+    for (let i = 0; i < a.tiebreak.length; i++) {
+      if (b.tiebreak[i] !== a.tiebreak[i]) return b.tiebreak[i] - a.tiebreak[i];
+    }
+    return a.pseudo.localeCompare(b.pseudo);
+  });
+  scored.forEach((p, i) => {
+    p.rank = i + 1;
+  });
+  return scored;
+}
