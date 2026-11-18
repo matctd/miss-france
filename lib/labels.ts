@@ -66,9 +66,6 @@ export const LABELS = {
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
     rules: {
-      badgeTop15: 'Top 15',
-      badgeTop5: 'Top 5',
-      badgePodium: 'Podium',
       detailLink: 'ℹ́ Détail du barème',
       title: 'Les règles du jeu',
       step1Title: 'Étape 1 · Top 15',

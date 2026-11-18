@@ -308,9 +308,6 @@ export default function SalonPage() {
       </div>
 
       <div className="rules-bar">
-        <span className="badge">{LABELS.joueur.rules.badgeTop15}</span>
-        <span className="badge">{LABELS.joueur.rules.badgeTop5}</span>
-        <span className="badge">{LABELS.joueur.rules.badgePodium}</span>
         <a
           className="link"
           href="#"
