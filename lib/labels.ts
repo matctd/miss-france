@@ -29,8 +29,7 @@ export const LABELS = {
     orderHint:
       'Les places 4 et 5 ne sont pas ordonnées officiellement : peu importe ton ordre entre elles.',
     choosePosition: '— Position —',
-    orderMedals: ['🥇', '🥈', '🥉', '4ᵉ', '5ᵉ'],
-    orderPoints: ['15 pts', '10 pts', '5 pts', '2,5 pts', '2,5 pts'],
+    orderPositions: ['🥇 Gagnante', '🥈 1ʳᵉ dauphine', '🥉 2ᵉ dauphine', '4ᵉ', '5ᵉ'],
     validateOrder: '👑 VALIDER MON PODIUM',
     savedPicks: '✅ Pronostic enregistré ! Modifiable jusqu’au verrouillage.',
     savedOrder: '👑 Podium enregistré ! Modifiable jusqu’au verrouillage.',
@@ -103,7 +102,7 @@ export const LABELS = {
       'Classement des 5 finalistes dans l’ordre : gagnante, 1re dauphine, 2e dauphine, puis 4ᵉ et 5ᵉ',
     podiumHint: 'Attribue une position à chaque finaliste, dans l’ordre que tu veux (tu peux commencer par la 5ᵉ).',
     podiumChoosePosition: '— Position —',
-    podiumPositions: ['🥇 Gagnante — 15 pts', '🥈 1ʳᵉ dauphine — 10 pts', '🥉 2ᵉ dauphine — 5 pts', '4ᵉ — 2,5 pts', '5ᵉ — 2,5 pts'],
+    podiumPositions: ['🥇 Gagnante', '🥈 1ʳᵉ dauphine', '🥉 2ᵉ dauphine', '4ᵉ', '5ᵉ'],
     podiumNeedTop5: 'Renseigne d’abord le top 5 ci-dessus.',
     podiumSave: 'Enregistrer le podium',
     podiumSaved: (regions: string) => `✔ Podium : ${regions}`,

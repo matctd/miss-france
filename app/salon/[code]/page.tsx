@@ -237,8 +237,7 @@ export default function SalonPage() {
     );
   } else if (stage === 'final_open') {
     const options = realTop5 ?? [];
-    const medals = LABELS.joueur.orderMedals;
-    const points = LABELS.joueur.orderPoints;
+    const positions = LABELS.joueur.orderPositions;
     const ranksAssigned = Object.keys(orderRanks).length === 5;
     body = (
       <div className="card">
@@ -262,12 +261,12 @@ export default function SalonPage() {
                 }}
               >
                 <option value="">{LABELS.joueur.choosePosition}</option>
-                {medals.map((m, i) => {
+                {positions.map((lbl, i) => {
                   const pos = String(i + 1);
                   const takenByOther = Object.entries(orderRanks).some(([id, r]) => id !== c && r === pos);
                   return (
                     <option key={pos} value={pos} disabled={takenByOther}>
-                      {`${m} — ${points[i]}`}
+                      {lbl}
                     </option>
                   );
                 })}
