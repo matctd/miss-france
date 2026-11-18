@@ -18,7 +18,6 @@ export default function AdminPage() {
   const [top15Sel, setTop15Sel] = useState('');
   const [top5Sel, setTop5Sel] = useState('');
   const [podiumRanks, setPodiumRanks] = useState<Record<string, string>>({});
-  const [candidatesText, setCandidatesText] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -320,18 +319,6 @@ export default function AdminPage() {
       <div className="card">
         <h2>{LABELS.admin.candidatesTitle(state.candidates.length)}</h2>
         <p className="hint">{LABELS.admin.candidatesHint}</p>
-        <textarea
-          rows={6}
-          value={candidatesText}
-          onChange={(e) => setCandidatesText(e.target.value)}
-          placeholder={'Alsace\nAuvergne\nNormandie'}
-        />
-        <button
-          className="small"
-          onClick={() => act({ action: 'addCandidates', text: candidatesText }, LABELS.admin.importMsg, 'import')}
-        >
-          {LABELS.admin.importButton}
-        </button>
         <div style={{ marginTop: 12 }}>
           {state.candidates.map((c) => (
             <span className="chip" key={c.id}>

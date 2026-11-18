@@ -109,10 +109,7 @@ export const LABELS = {
     podiumSaved: (regions: string) => `✔ Podium : ${regions}`,
     resultsSaved: (stage: string) => `✅ ${stage} enregistré`,
     candidatesTitle: (n: number) => `👥 Candidates (${n})`,
-    candidatesHint:
-      'Les 31 candidates Miss France 2027 sont préchargées. Ajoute des régions ci-dessous si besoin (une par ligne).',
-    importButton: 'Importer',
-    importMsg: 'Candidates ajoutées',
+    candidatesHint: 'Les 31 candidates Miss France 2027 sont préchargées à la création du salon.',
     backLink: '← Retour à l’écran joueur',
   },
 };
