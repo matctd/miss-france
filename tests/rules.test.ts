@@ -71,11 +71,57 @@ test('classement : total décroissant', () => {
   assert.equal(ranked[1].pseudo, 'B');
 });
 
-test('égalité de points : classement par ordre alphabétique de pseudo', () => {
+test('départage : gagnante trouvée avant tout (à total égal)', () => {
   const ranked = rankPlayers(
     [
-      { pseudo: 'Zoé', picks: { top15: REAL_TOP15.slice(0, 5) }, earliestSubmittedAt: 999 },
-      { pseudo: 'Adam', picks: { top15: REAL_TOP15.slice(0, 5) }, earliestSubmittedAt: 100 },
+      { pseudo: 'Sans gagnante', picks: { top15: REAL_TOP15.slice(0, 5), order: ['c9', 'c3', 'c20', 'c14', 'c7'] }, earliestSubmittedAt: 100 },
+      { pseudo: 'Avec gagnante', picks: { top15: ['x', 'y'], order: ['c3', 'c20', 'c21', 'c22', 'c23'] }, earliestSubmittedAt: 999 },
+    ],
+    { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
+  );
+  assert.equal(ranked[0].pseudo, 'Avec gagnante');
+});
+
+test('départage : podium complet avant score top15 (à total égal)', () => {
+  const ranked = rankPlayers(
+    [
+      { pseudo: 'Podium incomplet', picks: { top15: REAL_TOP15.slice(0, 5), order: ['c3', 'c9', 'c20', 'c21', 'c22'] }, earliestSubmittedAt: 100 },
+      { pseudo: 'Podium complet', picks: { top15: ['x', 'y'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] }, earliestSubmittedAt: 999 },
+    ],
+    { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
+  );
+  assert.equal(ranked[0].pseudo, 'Podium complet');
+});
+
+test('départage : score top15 avant précocité', () => {
+  const ranked = rankPlayers(
+    [
+      { pseudo: 'Tôt mais moins bon', picks: { top15: ['c1'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] }, earliestSubmittedAt: 100 },
+      { pseudo: 'Tard mais meilleur top15', picks: { top15: ['c1', 'c2'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] }, earliestSubmittedAt: 999 },
+    ],
+    { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
+  );
+  assert.equal(ranked[0].pseudo, 'Tard mais meilleur top15');
+});
+
+test('départage : soumission la plus précoce en dernier recours', () => {
+  const picks = { top15: ['c1'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] };
+  const ranked = rankPlayers(
+    [
+      { pseudo: 'Late', picks, earliestSubmittedAt: 500 },
+      { pseudo: 'Early', picks, earliestSubmittedAt: 100 },
+    ],
+    { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
+  );
+  assert.equal(ranked[0].pseudo, 'Early');
+});
+
+test('égalité parfaite : classement par ordre alphabétique de pseudo', () => {
+  const picks = { top15: REAL_TOP15.slice(0, 5) };
+  const ranked = rankPlayers(
+    [
+      { pseudo: 'Zoé', picks, earliestSubmittedAt: 100 },
+      { pseudo: 'Adam', picks, earliestSubmittedAt: 100 },
     ],
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );

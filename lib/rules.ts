@@ -71,18 +71,32 @@ export type RankedPlayer = {
   pseudo: string;
   score: PlayerScore;
   rank: number;
+  tiebreak: number[];
 };
 
 export function rankPlayers(
-  players: { pseudo: string; picks: Picks; earliestSubmittedAt?: number }[],
+  players: { pseudo: string; picks: Picks; earliestSubmittedAt: number }[],
   results: Results
 ): RankedPlayer[] {
+  const podium = results.podium ?? [];
   const scored = players.map((p) => {
     const score = scorePlayer(p.picks, results);
-    return { pseudo: p.pseudo, score, rank: 0 };
+    const winnerFound = podium.length > 0 && p.picks.order?.[0] === podium[0] ? 1 : 0;
+    const podiumComplete =
+      podium.length === 3 &&
+      p.picks.order?.[0] === podium[0] &&
+      p.picks.order?.[1] === podium[1] &&
+      p.picks.order?.[2] === podium[2]
+        ? 1
+        : 0;
+    const tiebreak = [winnerFound, podiumComplete, score.top15, -p.earliestSubmittedAt];
+    return { pseudo: p.pseudo, score, tiebreak, rank: 0 };
   });
   scored.sort((a, b) => {
     if (b.score.total !== a.score.total) return b.score.total - a.score.total;
+    for (let i = 0; i < a.tiebreak.length; i++) {
+      if (b.tiebreak[i] !== a.tiebreak[i]) return b.tiebreak[i] - a.tiebreak[i];
+    }
     return a.pseudo.localeCompare(b.pseudo);
   });
   scored.forEach((p, i) => {
