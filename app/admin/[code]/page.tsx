@@ -14,7 +14,7 @@ export default function AdminPage() {
   const [checked, setChecked] = useState(false);
   const [state, setState] = useState<StateResponse | null>(null);
   const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
+  const [infos, setInfos] = useState<Record<string, string>>({});
   const [top15Sel, setTop15Sel] = useState('');
   const [top5Sel, setTop5Sel] = useState('');
   const [podiumRanks, setPodiumRanks] = useState<Record<string, string>>({});
@@ -51,12 +51,11 @@ export default function AdminPage() {
     return () => clearInterval(id);
   }, [checked, refresh]);
 
-  async function act(payload: Record<string, unknown>, okMsg: string) {
+  async function act(payload: Record<string, unknown>, okMsg: string, infoKey: string) {
     setError('');
-    setInfo('');
     try {
       await api(`/api/salons/${code}/admin`, { token, ...payload });
-      setInfo(okMsg);
+      setInfos({ [infoKey]: okMsg });
       refresh();
     } catch (e) {
       setError((e as Error).message);
@@ -101,7 +100,7 @@ export default function AdminPage() {
       .filter((id) => podiumRanks[id])
       .sort((a, b) => Number(podiumRanks[a]) - Number(podiumRanks[b]));
     if (ordered.length !== 5) return;
-    await act({ action: 'setResults', stage: 'podium', ids: ordered }, LABELS.admin.resultsSaved('Podium'));
+    await act({ action: 'setResults', stage: 'podium', ids: ordered }, LABELS.admin.resultsSaved('Podium'), 'results-podium');
   }
 
   function ResultsBlock({
@@ -156,18 +155,24 @@ export default function AdminPage() {
                 stage: resStage,
                 ids: [...saved, selected],
               },
-              LABELS.admin.resultsSaved(resStage === 'podium' ? 'Podium' : resStage === 'top15' ? 'Top 15' : 'Top 5')
+              LABELS.admin.resultsSaved(resStage === 'podium' ? 'Podium' : resStage === 'top15' ? 'Top 15' : 'Top 5'),
+              `results-${resStage}`
             ).then(() => setSelected(''))
           }
         >
           {complete ? `✔ ${saved.length}/${max}` : `➕ ${addLabel} (${saved.length}/${max})`}
         </button>
+        {infos[`results-${resStage}`] && <p className="success">{infos[`results-${resStage}`]}</p>}
         {saved.length > 0 && (
           <>
             <p className="hint">{savedLabel(regionsOf(saved))}</p>
-            <button className="small secondary danger" onClick={() => act({ action: 'resetResults', stage: resStage }, 'Résultats réinitialisés')}>
+            <button
+              className="small secondary danger"
+              onClick={() => act({ action: 'resetResults', stage: resStage }, 'Résultats réinitialisés', `reset-${resStage}`)}
+            >
               Réinitialiser
             </button>
+            {infos[`reset-${resStage}`] && <p className="success">{infos[`reset-${resStage}`]}</p>}
           </>
         )}
       </div>
@@ -188,28 +193,42 @@ export default function AdminPage() {
       <div className="card">
         <h2>{STAGE_TEXT[stage] ?? stage}</h2>
         {stage === 'top15_open' && (
-          <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockMsg)}>{LABELS.admin.lockButton}</button>
+          <>
+            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockMsg, 'stage')}>{LABELS.admin.lockButton}</button>
+            {infos.stage && <p className="success">{infos.stage}</p>}
+          </>
         )}
         {stage === 'top15_locked' && (
-          <button onClick={() => act({ action: 'open', stage: 'top5' }, LABELS.admin.openTop5Msg)}>{LABELS.admin.openTop5Button}</button>
+          <>
+            <button onClick={() => act({ action: 'open', stage: 'top5' }, LABELS.admin.openTop5Msg, 'stage')}>{LABELS.admin.openTop5Button}</button>
+            {infos.stage && <p className="success">{infos.stage}</p>}
+          </>
         )}
         {stage === 'top5_open' && (
           <>
-            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockTop5Msg)}>{LABELS.admin.lockTop5Button}</button>
+            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockTop5Msg, 'stage')}>{LABELS.admin.lockTop5Button}</button>
+            {infos.stage && <p className="success">{infos.stage}</p>}
             <p className="hint">Saisis les 5 finalistes ci-dessous pendant l’annonce, puis verrouille.</p>
           </>
         )}
         {stage === 'top5_locked' && (
-          <button onClick={() => act({ action: 'open', stage: 'final' }, LABELS.admin.openFinalMsg)}>{LABELS.admin.openFinalButton}</button>
+          <>
+            <button onClick={() => act({ action: 'open', stage: 'final' }, LABELS.admin.openFinalMsg, 'stage')}>{LABELS.admin.openFinalButton}</button>
+            {infos.stage && <p className="success">{infos.stage}</p>}
+          </>
         )}
         {stage === 'final_open' && (
           <>
-            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockFinalMsg)}>{LABELS.admin.lockFinalButton}</button>
+            <button onClick={() => act({ action: 'lock' }, LABELS.admin.lockFinalMsg, 'stage')}>{LABELS.admin.lockFinalButton}</button>
+            {infos.stage && <p className="success">{infos.stage}</p>}
             <p className="hint">Saisis le podium ci-dessous pendant le couronnement, puis verrouille.</p>
           </>
         )}
         {stage === 'final_locked' && (
-          <button onClick={() => act({ action: 'finish' }, LABELS.admin.finishMsg)}>{LABELS.admin.finishButton}</button>
+          <>
+            <button onClick={() => act({ action: 'finish' }, LABELS.admin.finishMsg, 'stage')}>{LABELS.admin.finishButton}</button>
+            {infos.stage && <p className="success">{infos.stage}</p>}
+          </>
         )}
         {stage === 'done' && <p className="success">{LABELS.admin.doneText}</p>}
       </div>
@@ -279,12 +298,16 @@ export default function AdminPage() {
             <button onClick={savePodium} disabled={top5.filter((cid) => podiumRanks[cid]).length !== 5}>
               {LABELS.admin.podiumSave}
             </button>
+            {infos['results-podium'] && <p className="success">{infos['results-podium']}</p>}
             <button
               className="small secondary danger"
-              onClick={() => act({ action: 'resetResults', stage: 'podium' }, 'Résultats réinitialisés').then(() => setPodiumRanks({}))}
+              onClick={() =>
+                act({ action: 'resetResults', stage: 'podium' }, 'Résultats réinitialisés', 'reset-podium').then(() => setPodiumRanks({}))
+              }
             >
               Réinitialiser
             </button>
+            {infos['reset-podium'] && <p className="success">{infos['reset-podium']}</p>}
           </div>
         ) : (
           <div className="admin-section">
@@ -303,7 +326,10 @@ export default function AdminPage() {
           onChange={(e) => setCandidatesText(e.target.value)}
           placeholder={'Alsace\nAuvergne\nNormandie'}
         />
-        <button className="small" onClick={() => act({ action: 'addCandidates', text: candidatesText }, LABELS.admin.importMsg)}>
+        <button
+          className="small"
+          onClick={() => act({ action: 'addCandidates', text: candidatesText }, LABELS.admin.importMsg, 'import')}
+        >
           {LABELS.admin.importButton}
         </button>
         <div style={{ marginTop: 12 }}>
@@ -315,7 +341,6 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {info && <p className="success">{info}</p>}
       {error && <p className="error">{error}</p>}
       <p style={{ textAlign: 'center', marginTop: 16 }}>
         <a className="link" href={`/salon/${code}`}>
