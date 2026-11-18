@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db, getSalon, effectiveStage, parseUtc } from '@/lib/db';
+import { db, getSalon, effectiveStage } from '@/lib/db';
 import { rankPlayers, type Picks, type Results, type Stage } from '@/lib/rules';
 
 const ORDER_AFTER: Record<string, Stage[]> = {
@@ -32,13 +32,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ code
     .all(salon.id) as any[];
 
   const picksByAmi = new Map<number, Picks>();
-  const submittedAtByAmi = new Map<number, number>();
   for (const row of picksRows) {
     const current = picksByAmi.get(row.ami_id) || {};
     current[row.stage as keyof Picks] = JSON.parse(row.data);
     picksByAmi.set(row.ami_id, current);
-    const ts = parseUtc(row.submitted_at);
-    submittedAtByAmi.set(row.ami_id, Math.min(submittedAtByAmi.get(row.ami_id) ?? Infinity, ts));
   }
 
   const resultsRows = db
@@ -71,7 +68,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ code
   const players = amis.map((a) => ({
     pseudo: a.pseudo,
     picks: picksByAmi.get(a.id) || {},
-    earliestSubmittedAt: submittedAtByAmi.get(a.id) ?? Number.MAX_SAFE_INTEGER,
   }));
   const classement = me ? rankPlayers(players, results) : [];
 

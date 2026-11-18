@@ -418,12 +418,6 @@ function RulesOverlay({ onClose }: { onClose: () => void }) {
         <p>{rules.step2}</p>
         <h3>{rules.step3Title}</h3>
         <p>{rules.step3}</p>
-        <h3>{rules.tieTitle}</h3>
-        <ol>
-          {rules.tieLines.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ol>
         <div className="rules-total">{rules.maxBadge}</div>
       </div>
     </div>
@@ -459,9 +453,6 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
           ))}
         </tbody>
       </table>
-      <p className="hint" style={{ marginTop: 8 }}>
-        {LABELS.joueur.tiebreakHint}
-      </p>
     </div>
   );
 }
