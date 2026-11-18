@@ -32,6 +32,7 @@ export default function SalonPage() {
   const [state, setState] = useState<StateResponse | null>(null);
   const [error, setError] = useState('');
   const [showScores, setShowScores] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<string[]>([]);
   const [orderRanks, setOrderRanks] = useState<Record<string, string>>({});
@@ -237,8 +238,7 @@ export default function SalonPage() {
     );
   } else if (stage === 'final_open') {
     const options = realTop5 ?? [];
-    const medals = LABELS.joueur.orderMedals;
-    const points = LABELS.joueur.orderPoints;
+    const positions = LABELS.joueur.orderPositions;
     const ranksAssigned = Object.keys(orderRanks).length === 5;
     body = (
       <div className="card">
@@ -262,12 +262,12 @@ export default function SalonPage() {
                 }}
               >
                 <option value="">{LABELS.joueur.choosePosition}</option>
-                {medals.map((m, i) => {
+                {positions.map((lbl, i) => {
                   const pos = String(i + 1);
                   const takenByOther = Object.entries(orderRanks).some(([id, r]) => id !== c && r === pos);
                   return (
                     <option key={pos} value={pos} disabled={takenByOther}>
-                      {`${m} — ${points[i]}`}
+                      {lbl}
                     </option>
                   );
                 })}
@@ -306,6 +306,24 @@ export default function SalonPage() {
           </span>
         ))}
       </div>
+
+      <div className="rules-bar">
+        <span className="badge">{LABELS.joueur.rules.badgeTop15}</span>
+        <span className="badge">{LABELS.joueur.rules.badgeTop5}</span>
+        <span className="badge">{LABELS.joueur.rules.badgePodium}</span>
+        <a
+          className="link"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowRules(true);
+          }}
+        >
+          {LABELS.joueur.rules.detailLink}
+        </a>
+      </div>
+
+      {showRules && <RulesOverlay onClose={() => setShowRules(false)} />}
 
       {stage === 'top15_open' && (
         <p className="hint" style={{ textAlign: 'center' }}>
@@ -382,6 +400,33 @@ function RevealScreen({
         </div>
       </div>
     </>
+  );
+}
+
+function RulesOverlay({ onClose }: { onClose: () => void }) {
+  const rules = LABELS.joueur.rules;
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="overlay-card" onClick={(e) => e.stopPropagation()}>
+        <button className="small secondary overlay-close" onClick={onClose}>
+          ✕
+        </button>
+        <h2>{rules.title}</h2>
+        <h3>{rules.step1Title}</h3>
+        <p>{rules.step1}</p>
+        <h3>{rules.step2Title}</h3>
+        <p>{rules.step2}</p>
+        <h3>{rules.step3Title}</h3>
+        <p>{rules.step3}</p>
+        <h3>{rules.tieTitle}</h3>
+        <ol>
+          {rules.tieLines.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ol>
+        <div className="rules-total">{rules.maxBadge}</div>
+      </div>
+    </div>
   );
 }
 

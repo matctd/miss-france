@@ -25,15 +25,11 @@ function assert(cond, label) {
   assert(st.stage === 'top15_open', 'étape top15 ouverte');
   assert(st.candidates.length === 31, '31 candidates Miss France 2027 préchargées');
 
-  const add = await api(`/api/salons/${code}/admin`, { token: admin, action: 'addCandidates', text: 'Test' });
-  assert(add.status === 200 && add.json.added === 1, 'ajout manuel d’une région possible');
-
   const karim = await api(`/api/salons/${code}/join`, { pseudo: 'Karim' });
   const sofia = await api(`/api/salons/${code}/join`, { pseudo: 'Sofia' });
   assert(karim.status === 200 && sofia.status === 200, '2 amis ont rejoint');
 
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
-  assert(st.candidates.length === 32, '32 candidates au total');
 
   const cands = st.candidates.slice().sort((a, b) => a.id - b.id);
   const real15 = cands.slice(0, 15).map((c) => String(c.id));

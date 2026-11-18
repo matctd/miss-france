@@ -105,20 +105,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     return NextResponse.json({ ok: true });
   }
 
-  if (action === 'addCandidates') {
-    const text = typeof body?.text === 'string' ? body.text : '';
-    const regions = text
-      .split('\n')
-      .map((r: string) => r.trim().slice(0, 80))
-      .filter(Boolean);
-    if (regions.length === 0) {
-      return NextResponse.json({ error: 'Une région par ligne (au moins une)' }, { status: 400 });
-    }
-    const insert = db.prepare('INSERT INTO candidates (salon_id, region) VALUES (?, ?)');
-    for (const region of regions) insert.run(salon.id, region);
-    return NextResponse.json({ ok: true, added: regions.length });
-  }
-
   if (action === 'finish') {
     const top5 = getResultat(salon.id, 'top5');
     const podium = getResultat(salon.id, 'podium');

@@ -1,3 +1,11 @@
+import { RULES } from './rules';
+
+const TOP15_MAX = RULES.top15.perMiss * RULES.top15.size;
+const TOP5_MAX = RULES.top5.perFinalist * RULES.top5.size;
+const PODIUM_MAX =
+  RULES.order.winner + RULES.order.firstDauphine + RULES.order.secondDauphine + 2 * RULES.order.fourthOrFifth;
+const PTS_45 = String(RULES.order.fourthOrFifth).replace('.', ',');
+
 export const LABELS = {
   app: {
     title: '👑 MISS PRONOS 👑',
@@ -29,8 +37,7 @@ export const LABELS = {
     orderHint:
       'Les places 4 et 5 ne sont pas ordonnées officiellement : peu importe ton ordre entre elles.',
     choosePosition: '— Position —',
-    orderMedals: ['🥇', '🥈', '🥉', '4ᵉ', '5ᵉ'],
-    orderPoints: ['15 pts', '10 pts', '5 pts', '2,5 pts', '2,5 pts'],
+    orderPositions: ['🥇 Gagnante', '🥈 1ʳᵉ dauphine', '🥉 2ᵉ dauphine', '4ᵉ', '5ᵉ'],
     validateOrder: '👑 VALIDER MON PODIUM',
     savedPicks: '✅ Pronostic enregistré ! Modifiable jusqu’au verrouillage.',
     savedOrder: '👑 Podium enregistré ! Modifiable jusqu’au verrouillage.',
@@ -60,6 +67,27 @@ export const LABELS = {
     statsWinners: (n: number) => `· ${n} joueurs ont trouvé la gagnante`,
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
+    rules: {
+      badgeTop15: 'Top 15',
+      badgeTop5: 'Top 5',
+      badgePodium: 'Podium',
+      detailLink: 'ℹ́ Détail du barème',
+      title: 'Les règles du jeu',
+      step1Title: 'Étape 1 · Top 15',
+      step1: `${RULES.top15.perMiss} pts par miss trouvée dans le top 15 — max ${TOP15_MAX} pts`,
+      step2Title: 'Étape 2 · Top 5',
+      step2: `${RULES.top5.perFinalist} pts par finaliste trouvé — max ${TOP5_MAX} pts`,
+      step3Title: 'Étape 3 · Podium',
+      step3: `Gagnante ${RULES.order.winner} · 1ʳᵉ dauphine ${RULES.order.firstDauphine} · 2ᵉ dauphine ${RULES.order.secondDauphine} · 4ᵉ et 5ᵉ ${PTS_45} — max ${PODIUM_MAX} pts`,
+      tieTitle: 'Départages en cas d’égalité',
+      tieLines: [
+        'La gagnante trouvée',
+        'Le podium complet',
+        'Le top 15 le plus proche',
+        'La soumission la plus précoce',
+      ],
+      maxBadge: `${RULES.maxTotal} points maxi`,
+    },
   },
   admin: {
     title: '🎛️ Console admin',
@@ -103,16 +131,13 @@ export const LABELS = {
       'Classement des 5 finalistes dans l’ordre : gagnante, 1re dauphine, 2e dauphine, puis 4ᵉ et 5ᵉ',
     podiumHint: 'Attribue une position à chaque finaliste, dans l’ordre que tu veux (tu peux commencer par la 5ᵉ).',
     podiumChoosePosition: '— Position —',
-    podiumPositions: ['🥇 Gagnante — 15 pts', '🥈 1ʳᵉ dauphine — 10 pts', '🥉 2ᵉ dauphine — 5 pts', '4ᵉ — 2,5 pts', '5ᵉ — 2,5 pts'],
+    podiumPositions: ['🥇 Gagnante', '🥈 1ʳᵉ dauphine', '🥉 2ᵉ dauphine', '4ᵉ', '5ᵉ'],
     podiumNeedTop5: 'Renseigne d’abord le top 5 ci-dessus.',
     podiumSave: 'Enregistrer le podium',
     podiumSaved: (regions: string) => `✔ Podium : ${regions}`,
     resultsSaved: (stage: string) => `✅ ${stage} enregistré`,
     candidatesTitle: (n: number) => `👥 Candidates (${n})`,
-    candidatesHint:
-      'Les 31 candidates Miss France 2027 sont préchargées. Ajoute des régions ci-dessous si besoin (une par ligne).',
-    importButton: 'Importer',
-    importMsg: 'Candidates ajoutées',
+    candidatesHint: 'Les 31 candidates Miss France 2027 sont préchargées à la création du salon.',
     backLink: '← Retour à l’écran joueur',
   },
 };
