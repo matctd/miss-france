@@ -1,3 +1,11 @@
+import { RULES } from './rules';
+
+const TOP15_MAX = RULES.top15.perMiss * RULES.top15.size;
+const TOP5_MAX = RULES.top5.perFinalist * RULES.top5.size;
+const PODIUM_MAX =
+  RULES.order.winner + RULES.order.firstDauphine + RULES.order.secondDauphine + 2 * RULES.order.fourthOrFifth;
+const PTS_45 = String(RULES.order.fourthOrFifth).replace('.', ',');
+
 export const LABELS = {
   app: {
     title: '👑 MISS PRONOS 👑',
@@ -59,6 +67,27 @@ export const LABELS = {
     statsWinners: (n: number) => `· ${n} joueurs ont trouvé la gagnante`,
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
+    rules: {
+      badgeTop15: `Top 15 · ${TOP15_MAX}`,
+      badgeTop5: `Top 5 · ${TOP5_MAX}`,
+      badgePodium: `Podium · ${PODIUM_MAX}`,
+      detailLink: 'ℹ́ Détail du barème',
+      title: 'Les règles du jeu',
+      step1Title: 'Étape 1 · Top 15',
+      step1: `${RULES.top15.perMiss} pts par miss trouvée dans le top 15 — max ${TOP15_MAX} pts`,
+      step2Title: 'Étape 2 · Top 5',
+      step2: `${RULES.top5.perFinalist} pts par finaliste trouvé — max ${TOP5_MAX} pts`,
+      step3Title: 'Étape 3 · Podium',
+      step3: `Gagnante ${RULES.order.winner} · 1ʳᵉ dauphine ${RULES.order.firstDauphine} · 2ᵉ dauphine ${RULES.order.secondDauphine} · 4ᵉ et 5ᵉ ${PTS_45} — max ${PODIUM_MAX} pts`,
+      tieTitle: 'Départages en cas d’égalité',
+      tieLines: [
+        'La gagnante trouvée',
+        'Le podium complet',
+        'Le top 15 le plus proche',
+        'La soumission la plus précoce',
+      ],
+      maxBadge: `${RULES.maxTotal} points maxi`,
+    },
   },
   admin: {
     title: '🎛️ Console admin',
