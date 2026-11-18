@@ -1,14 +1,14 @@
 :root {
-  --bg: #12081f;
-  --panel: #1e1233;
-  --panel-2: #2a1a47;
-  --border: #3d2a63;
-  --gold: #f5c542;
-  --gold-2: #d4a017;
-  --text: #f3edff;
-  --muted: #a89cc8;
-  --danger: #ff6b6b;
-  --success: #4ade80;
+  --bg: #faf6ef;
+  --panel: #ffffff;
+  --panel-2: #f5eee0;
+  --border: #e4d9c3;
+  --gold: #c9a227;
+  --gold-2: #f5c542;
+  --text: #2b2117;
+  --muted: #8a7d63;
+  --danger: #d64545;
+  --success: #2e9e5b;
 }
 
 * {
@@ -18,7 +18,7 @@
 }
 
 body {
-  background: radial-gradient(1200px 600px at 50% -100px, #2d1a52 0%, var(--bg) 60%);
+  background: radial-gradient(1200px 600px at 50% -100px, #f9ecd8 0%, var(--bg) 60%);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
@@ -201,7 +201,7 @@ button.small {
 
 .candidate.checked {
   border-color: var(--gold);
-  background: #33245c;
+  background: #f7e8d2;
 }
 
 .order-row {
@@ -276,7 +276,7 @@ table.scores th:first-child {
 }
 
 .ranking-row.me {
-  background: #33245c;
+  background: #f7e8d2;
   border-radius: 10px;
   padding-left: 8px;
   padding-right: 8px;
