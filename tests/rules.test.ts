@@ -116,6 +116,19 @@ test('départage : soumission la plus précoce en dernier recours', () => {
   assert.equal(ranked[0].pseudo, 'Early');
 });
 
+test('égalité parfaite : classement par ordre alphabétique de pseudo', () => {
+  const picks = { top15: REAL_TOP15.slice(0, 5) };
+  const ranked = rankPlayers(
+    [
+      { pseudo: 'Zoé', picks, earliestSubmittedAt: 100 },
+      { pseudo: 'Adam', picks, earliestSubmittedAt: 100 },
+    ],
+    { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
+  );
+  assert.equal(ranked[0].pseudo, 'Adam');
+  assert.equal(ranked[1].pseudo, 'Zoé');
+});
+
 test('barème : total maximum = 95 points', () => {
   const s = scorePlayer(
     { top15: REAL_TOP15, top5: REAL_TOP5, order: ['c3', 'c9', 'c1', 'c14', 'c7'] },

@@ -52,8 +52,6 @@ export const LABELS = {
     myPicksTitle: 'Tes pronostics',
     scoresTitle: '🏆 Classement des amis',
     scoresHead: { player: 'Joueur', top15: 'Top 15', top5: 'Top 5', order: 'Podium', total: 'Total' },
-    tiebreakHint:
-      'Départages : gagnante trouvée → podium complet → top 15 → soumission la plus précoce.',
     countsTop15: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leurs 15 miss`,
     countsTop5: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leur top 5`,
     countsOrder: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leur podium`,
@@ -68,9 +66,6 @@ export const LABELS = {
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
     rules: {
-      badgeTop15: 'Top 15',
-      badgeTop5: 'Top 5',
-      badgePodium: 'Podium',
       detailLink: 'ℹ́ Détail du barème',
       title: 'Les règles du jeu',
       step1Title: 'Étape 1 · Top 15',
@@ -79,13 +74,6 @@ export const LABELS = {
       step2: `${RULES.top5.perFinalist} pts par finaliste trouvé — max ${TOP5_MAX} pts`,
       step3Title: 'Étape 3 · Podium',
       step3: `Gagnante ${RULES.order.winner} · 1ʳᵉ dauphine ${RULES.order.firstDauphine} · 2ᵉ dauphine ${RULES.order.secondDauphine} · 4ᵉ et 5ᵉ ${PTS_45} — max ${PODIUM_MAX} pts`,
-      tieTitle: 'Départages en cas d’égalité',
-      tieLines: [
-        'La gagnante trouvée',
-        'Le podium complet',
-        'Le top 15 le plus proche',
-        'La soumission la plus précoce',
-      ],
       maxBadge: `${RULES.maxTotal} points maxi`,
     },
   },
