@@ -214,6 +214,23 @@ button.small {
   margin-bottom: 10px;
 }
 
+/* Toutes les cases de choix de place ont la même taille */
+.order-row .names {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-row select {
+  width: 190px;
+  flex: none;
+}
+
+@media (max-width: 420px) {
+  .order-row select {
+    width: 150px;
+  }
+}
+
 .miss-photo {
   flex: none;
   border-radius: 50%;

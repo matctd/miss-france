@@ -292,7 +292,7 @@ export default function SalonPage() {
       </div>
     );
   } else if (stage === 'done') {
-    body = <FinalScreen state={state} regions={regions} />;
+    body = <FinalScreen state={state} />;
   } else {
     body = <RevealScreen state={state} regions={regions} me={state.me.pseudo} myPicks={state.me.picks} />;
   }
@@ -457,29 +457,9 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
   );
 }
 
-function FinalScreen({
-  state,
-  regions,
-}: {
-  state: StateResponse;
-  regions: (ids: string[] | undefined) => string;
-}) {
+function FinalScreen({ state }: { state: StateResponse }) {
   const classement = state.classement;
   const winner = classement[0];
-  const realWinner = state.results.podium?.[0];
-  const winnerCount = classement.filter(
-    (p) => realWinner && p.pseudo && state.revealedPicks[p.pseudo]?.order?.[0] === realWinner
-  ).length;
-
-  const missCounts = new Map<string, number>();
-  Object.values(state.revealedPicks).forEach((picks) => {
-    (picks.top15 ?? []).forEach((id) => missCounts.set(id, (missCounts.get(id) ?? 0) + 1));
-  });
-  const mostPicked = [...missCounts.entries()].sort((a, b) => b[1] - a[1])[0];
-  const avg =
-    classement.length > 0
-      ? (classement.reduce((sum, p) => sum + p.score.total, 0) / classement.length).toFixed(1)
-      : '0';
 
   return (
     <>
@@ -501,24 +481,6 @@ function FinalScreen({
           </div>
         ))}
       </div>
-      <div className="card">
-        <h2>{LABELS.joueur.statsTitle}</h2>
-        <p className="hint">
-          {mostPicked
-            ? LABELS.joueur.statsMostPicked(byIdRegion(state, mostPicked[0]), mostPicked[1])
-            : '—'}
-        </p>
-        <p className="hint">{LABELS.joueur.statsAvg(avg)}</p>
-        <p className="hint">
-          {winnerCount === 1 ? LABELS.joueur.statsOneWinner : LABELS.joueur.statsWinners(winnerCount)}
-        </p>
-        <p className="hint">{LABELS.joueur.statsPodium(regions(state.results.podium))}</p>
-      </div>
     </>
   );
-}
-
-function byIdRegion(state: StateResponse, id: string): string {
-  const c = state.candidates.find((x) => String(x.id) === id);
-  return c ? c.region : '?';
 }

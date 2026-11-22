@@ -58,12 +58,6 @@ export const LABELS = {
     winnerTitle: '🎉 LA REINE DE LA SOIRÉE 🎉',
     winnerSubtitle: '« Meilleur pronostiqueur de la soirée »',
     finalRankingTitle: 'Classement final',
-    statsTitle: '📊 Stats de la soirée',
-    statsMostPicked: (region: string, n: number) => `· Région la plus pronostiquée : ${region} (${n} picks)`,
-    statsAvg: (avg: string) => `· Score moyen : ${avg} pts`,
-    statsOneWinner: '· Un seul joueur a trouvé la gagnante 👏',
-    statsWinners: (n: number) => `· ${n} joueurs ont trouvé la gagnante`,
-    statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
     missPhotoAlt: (region: string) => `Portrait de Miss ${region}`,
     rules: {
