@@ -1,5 +1,7 @@
 import { RULES } from './rules';
 
+const SIZE_1 = RULES.top15.size;
+const TOP15_NAME = `Top ${SIZE_1}`;
 const TOP15_MAX = RULES.top15.perMiss * RULES.top15.size;
 const TOP5_MAX = RULES.top5.perFinalist * RULES.top5.size;
 const PODIUM_MAX =
@@ -21,12 +23,12 @@ export const LABELS = {
     createButton: 'CRÉER LE SALON →',
   },
   joueur: {
-    stageTabs: { top15: 'Top 15', top5: 'Top 5', final: 'Classement', done: 'Résultats' },
+    stageTabs: { top15: TOP15_NAME, top5: 'Top 5', final: 'Classement', done: 'Résultats' },
     loadingSalon: 'Chargement du salon',
     joinCardTitle: 'Ton pseudo',
     joinHeadingSuffix: 'Rejoins la partie !',
     joinButton: 'REJOINDRE →',
-    top15Title: 'Étape 1 — Coche tes 15 miss pendant les défilés',
+    top15Title: `Étape 1 — Coche tes ${SIZE_1} miss pendant les défilés`,
     top5Title: 'Étape 2 — Coche les 5 finalistes',
     selectedCount: 'sélectionnées',
     searchPlaceholder: '🔍 Rechercher une région…',
@@ -48,11 +50,11 @@ export const LABELS = {
     hideScores: '🙈 Masquer le classement des amis',
     maxError: (max: number) => `Maximum ${max} miss — décoches-en une d'abord`,
     lockedTitle: '🔒 Votes verrouillés — regardez le direct 📺',
-    revealLabels: { top15: 'Top 15', top5: 'Top 5', order: 'Podium' },
+    revealLabels: { top15: TOP15_NAME, top5: 'Top 5', order: 'Podium' },
     myPicksTitle: 'Tes pronostics',
     scoresTitle: '🏆 Classement des amis',
-    scoresHead: { player: 'Joueur', top15: 'Top 15', top5: 'Top 5', order: 'Podium', total: 'Total' },
-    countsTop15: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leurs 15 miss`,
+    scoresHead: { player: 'Joueur', top15: TOP15_NAME, top5: 'Top 5', order: 'Podium', total: 'Total' },
+    countsTop15: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leurs ${SIZE_1} miss`,
     countsTop5: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leur top 5`,
     countsOrder: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leur podium`,
     winnerTitle: '🎉 LA REINE DE LA SOIRÉE 🎉',
@@ -63,8 +65,8 @@ export const LABELS = {
     rules: {
       detailLink: 'ℹ́ Détail du barème',
       title: 'Les règles du jeu',
-      step1Title: 'Étape 1 · Top 15',
-      step1: `${RULES.top15.perMiss} pts par miss trouvée dans le top 15 — max ${TOP15_MAX} pts`,
+      step1Title: `Étape 1 · ${TOP15_NAME}`,
+      step1: `${RULES.top15.perMiss} pts par miss trouvée dans le top ${SIZE_1} — max ${TOP15_MAX} pts`,
       step2Title: 'Étape 2 · Top 5',
       step2: `${RULES.top5.perFinalist} pts par finaliste trouvé — max ${TOP5_MAX} pts`,
       step3Title: 'Étape 3 · Podium',
@@ -80,8 +82,8 @@ export const LABELS = {
     copyError: 'Copie impossible — copie l’adresse de la page manuellement.',
     inviteCopied: 'Lien copié — envoie-le à tes amis !',
     stageText: {
-      top15_open: 'Étape 1 · Top 15 — OUVERT',
-      top15_locked: 'Étape 1 · Top 15 — verrouillé',
+      top15_open: `Étape 1 · ${TOP15_NAME} — OUVERT`,
+      top15_locked: `Étape 1 · ${TOP15_NAME} — verrouillé`,
       top5_open: 'Étape 2 · Top 5 — OUVERT',
       top5_locked: 'Étape 2 · Top 5 — verrouillé',
       final_open: 'Étape 3 · Classement — OUVERT',
@@ -89,7 +91,7 @@ export const LABELS = {
       done: 'Soirée terminée',
     },
     lockButton: '🔒 VERROUILLER MAINTENANT',
-    lockMsg: '🔒 Top 15 verrouillé',
+    lockMsg: `🔒 ${TOP15_NAME} verrouillé`,
     lockTop5Button: '🔒 VERROUILLER LE TOP 5',
     lockTop5Msg: '🔒 Top 5 verrouillé',
     lockFinalButton: '🔒 VERROUILLER LE CLASSEMENT',
@@ -103,11 +105,12 @@ export const LABELS = {
     doneText: 'La soirée est terminée — classement final visible par tous.',
     resultsTitle: '📝 Résultats réels (au fil du direct)',
     chooseMiss: '— Choisir une miss —',
-    top15Label: 'Top 15 — ajoute les régions annoncées au fil du direct',
-    top15Save: 'Ajouter au top 15',
-    top15Saved: (regions: string) => `✔ Top 15 en cours : ${regions}`,
+    top15Name: TOP15_NAME,
+    top15Label: `${TOP15_NAME} — ajoute les régions annoncées au fil du direct`,
+    top15Save: `Ajouter au top ${SIZE_1}`,
+    top15Saved: (regions: string) => `✔ ${TOP15_NAME} en cours : ${regions}`,
     top5Label: 'Top 5 — ajoute les finalistes annoncées (l’ordre n’importe pas à cette étape)',
-    top5NeedTop15: 'Renseigne d’abord le top 15 ci-dessus.',
+    top5NeedTop15: `Renseigne d’abord le top ${SIZE_1} ci-dessus.`,
     top5Save: 'Ajouter au top 5',
     top5Saved: (regions: string) => `✔ Top 5 en cours : ${regions}`,
     podiumLabel:

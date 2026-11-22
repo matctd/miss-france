@@ -18,7 +18,7 @@ test('top15 : picks vides ou résultats absents = 0', () => {
 
 test('top15 : maximum 30 points', () => {
   assert.equal(scoreTop15(REAL_TOP15, REAL_TOP15), 30);
-  assert.equal(RULES.top15.perMiss * 15, 30);
+  assert.equal(RULES.top15.perMiss * RULES.top15.size, 30);
 });
 
 test('top5 : 6 points par finaliste trouvé', () => {
@@ -129,10 +129,11 @@ test('égalité parfaite : classement par ordre alphabétique de pseudo', () => 
   assert.equal(ranked[1].pseudo, 'Zoé');
 });
 
-test('barème : total maximum = 95 points', () => {
+test('barème : le total maximum correspond au barème défini', () => {
   const s = scorePlayer(
     { top15: REAL_TOP15, top5: REAL_TOP5, order: ['c3', 'c9', 'c1', 'c14', 'c7'] },
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
-  assert.equal(s.total, 95);
+  assert.equal(s.total, RULES.maxTotal);
+  assert.equal(RULES.maxTotal, 95);
 });

@@ -21,6 +21,8 @@ Web app de pronostics Miss France entre amis. Chacun sélectionne son top 15 pen
 
 Le barème complet est centralisé dans [`lib/rules.ts`](lib/rules.ts).
 
+> **Astuce** : la taille de la 1ʳᵉ étape est paramétrable — pour passer à un top 12 au lieu d'un top 15, il suffit de changer `size: 15` en `size: 12` dans `RULES.top15` ([`lib/rules.ts`](lib/rules.ts)). Le maximum de points, les écrans joueur/admin et les vérifications serveur suivent automatiquement.
+
 ## Photos des candidates
 
 Les portraits officiels des 31 candidates sont affichés au-dessus de leur nom de région (grille de sélection et podium). Ces images sont **sous droits** (crédit : B. Decoin / Sipa / TF1) : [`lib/photos.ts`](lib/photos.ts) ne stocke que des **liens** vers les photos telles que publiées par 20 Minutes — aucun fichier image n'est embarqué dans ce dépôt. L'usage est réservé au cercle privé des joueurs du salon. En cas d'indisponibilité d'une photo, un repli discret (initiale de la région) s'affiche.
