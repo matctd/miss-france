@@ -189,7 +189,10 @@ button.small {
 
 .candidate {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 6px;
+  text-align: center;
   background: var(--panel-2);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -209,6 +212,24 @@ button.small {
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
+}
+
+.miss-photo {
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 15%;
+  display: block;
+  border: 2px solid var(--border);
+  background: var(--panel-2);
+}
+
+.miss-photo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-weight: 700;
 }
 
 .order-row .medal {

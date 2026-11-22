@@ -65,6 +65,7 @@ export const LABELS = {
     statsWinners: (n: number) => `· ${n} joueurs ont trouvé la gagnante`,
     statsPodium: (podium: string) => `· Podium réel : ${podium}`,
     adminLink: '🎛️ Ouvrir la console admin',
+    missPhotoAlt: (region: string) => `Portrait de Miss ${region}`,
     rules: {
       detailLink: 'ℹ́ Détail du barème',
       title: 'Les règles du jeu',

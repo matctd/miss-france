@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, type StateResponse } from '@/lib/client';
 import { LABELS } from '@/lib/labels';
+import { MissPhoto } from '@/app/_components/MissPhoto';
 
 const STAGE_TEXT: Record<string, string> = LABELS.admin.stageText;
 
@@ -268,6 +269,7 @@ export default function AdminPage() {
             <p className="hint">{LABELS.admin.podiumHint}</p>
             {top5.map((id) => (
               <div className="order-row" key={id}>
+                <MissPhoto region={byId.get(id)?.region ?? id} size={36} />
                 <span className="names">{byId.get(id)?.region ?? id}</span>
                 <select
                   value={podiumRanks[id] ?? ''}
