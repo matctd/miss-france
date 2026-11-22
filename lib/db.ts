@@ -4,11 +4,13 @@ import path from 'node:path';
 import { randomBytes } from 'node:crypto';
 import type { Stage } from './rules';
 
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 const dataDir = process.env.DB_DIR || path.join(process.cwd(), 'data');
-mkdirSync(dataDir, { recursive: true });
+if (!isBuildPhase) mkdirSync(dataDir, { recursive: true });
 
-export const db = new Database(path.join(dataDir, 'miss-pronos.db'));
-db.pragma('journal_mode = WAL');
+// During `next build`, use an in-memory DB so parallel build workers never contend for the on-disk file.
+export const db = new Database(isBuildPhase ? ':memory:' : path.join(dataDir, 'miss-pronos.db'));
+if (!isBuildPhase) db.pragma('journal_mode = WAL');
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS salons (
