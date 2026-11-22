@@ -249,6 +249,48 @@ button.small {
   font-weight: 700;
 }
 
+.miss-winner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 8px 4px;
+}
+
+.miss-winner .miss-photo {
+  border-color: var(--gold);
+}
+
+.miss-winner .crown {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+.miss-winner .region {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.miss-winner .name {
+  font-size: 19px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+@media (max-width: 420px) {
+  .miss-winner {
+    gap: 18px;
+  }
+
+  .miss-winner .region {
+    font-size: 21px;
+  }
+
+  .miss-winner .name {
+    font-size: 16px;
+  }
+}
+
 .order-row .medal {
   font-size: 20px;
   min-width: 32px;

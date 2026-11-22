@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, setToken, type Candidate, type StateResponse } from '@/lib/client';
+import { CANDIDATE_NAMES } from '@/lib/candidates';
 import { LABELS } from '@/lib/labels';
 import { RULES } from '@/lib/rules';
 import { MissPhoto } from '@/app/_components/MissPhoto';
@@ -464,9 +465,25 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
 function FinalScreen({ state }: { state: StateResponse }) {
   const classement = state.classement;
   const winner = classement[0];
+  const winnerMissId = state.results.podium?.[0];
+  const winnerMiss = winnerMissId ? state.candidates.find((c) => String(c.id) === winnerMissId) : undefined;
+  const winnerMissName = winnerMiss ? CANDIDATE_NAMES[winnerMiss.region] : undefined;
 
   return (
     <>
+      {winnerMiss && (
+        <div className="card">
+          <div className="miss-winner">
+            <MissPhoto region={winnerMiss.region} size={150} />
+            <div>
+              <div className="crown">👑</div>
+              <div className="region">{LABELS.joueur.missWinnerRegion(winnerMiss.region)}</div>
+              {winnerMissName && <div className="name">{winnerMissName}</div>}
+            </div>
+          </div>
+          <p className="hint" style={{ textAlign: 'center' }}>{LABELS.joueur.missWinnerTitle}</p>
+        </div>
+      )}
       <div className="card winner-banner">
         <h2 style={{ border: 'none' }}>{LABELS.joueur.winnerTitle}</h2>
         <div className="name">👑 {winner?.pseudo ?? '—'} 👑</div>
