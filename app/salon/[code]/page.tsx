@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, setToken, type Candidate, type StateResponse } from '@/lib/client';
 import { LABELS } from '@/lib/labels';
+import { MissPhoto } from '@/app/_components/MissPhoto';
 
 const STAGE_LABELS: Record<string, string> = {
   top15_open: LABELS.joueur.stageTabs.top15,
@@ -212,6 +213,7 @@ export default function SalonPage() {
               className={`candidate ${current.includes(String(c.id)) ? 'checked' : ''}`}
               onClick={() => toggle(c.id, max)}
             >
+              <MissPhoto region={c.region} />
               <span>{c.region}</span>
             </div>
           ))}
@@ -248,6 +250,7 @@ export default function SalonPage() {
           const cand = byId.get(Number(c));
           return (
             <div className="order-row" key={c}>
+              <MissPhoto region={cand ? cand.region : c} size={36} />
               <span className="names">{cand ? cand.region : c}</span>
               <select
                 value={orderRanks[c] ?? ''}
