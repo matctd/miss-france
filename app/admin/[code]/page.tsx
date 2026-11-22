@@ -6,6 +6,7 @@ import { api, getToken, type StateResponse } from '@/lib/client';
 import { LABELS } from '@/lib/labels';
 import { RULES } from '@/lib/rules';
 import { MissPhoto } from '@/app/_components/MissPhoto';
+import { Footer } from '@/app/_components/Footer';
 
 const STAGE_TEXT: Record<string, string> = LABELS.admin.stageText;
 
@@ -337,6 +338,8 @@ export default function AdminPage() {
           {LABELS.admin.backLink}
         </a>
       </p>
+
+      <Footer />
     </main>
   );
 }

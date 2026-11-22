@@ -6,6 +6,7 @@ import { api, getToken, setToken, type Candidate, type StateResponse } from '@/l
 import { LABELS } from '@/lib/labels';
 import { RULES } from '@/lib/rules';
 import { MissPhoto } from '@/app/_components/MissPhoto';
+import { Footer } from '@/app/_components/Footer';
 
 const STAGE_LABELS: Record<string, string> = {
   top15_open: LABELS.joueur.stageTabs.top15,
@@ -362,6 +363,8 @@ export default function SalonPage() {
           </a>
         </p>
       )}
+
+      <Footer />
     </main>
   );
 }

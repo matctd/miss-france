@@ -9,6 +9,10 @@ const PODIUM_MAX =
 const PTS_45 = String(RULES.order.fourthOrFifth).replace('.', ',');
 
 export const LABELS = {
+  footer: {
+    privateUse: 'Usage privé.',
+    photoCredit: 'Portraits : B. Decoin / Sipa / TF1',
+  },
   app: {
     title: '👑 MISS PRONOS 👑',
     tagline: '« Qui connaît vraiment la couronne ? »',
