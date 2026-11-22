@@ -25,7 +25,7 @@ Le barème complet est centralisé dans [`lib/rules.ts`](lib/rules.ts).
 
 ## Photos des candidates
 
-Les portraits officiels des 31 candidates sont affichés au-dessus de leur nom de région (grille de sélection et podium). Ces images sont **sous droits** (crédit : B. Decoin / Sipa / TF1) : [`lib/photos.ts`](lib/photos.ts) ne stocke que des **liens** vers les photos telles que publiées par 20 Minutes — aucun fichier image n'est embarqué dans ce dépôt. L'usage est réservé au cercle privé des joueurs du salon. En cas d'indisponibilité d'une photo, un repli discret (initiale de la région) s'affiche.
+Les portraits officiels des 31 candidates sont affichés au-dessus de leur nom de région (grille de sélection et podium), et celui de la miss élue dans l'encart final — avec son **prénom et nom** (source : tableau des candidatures de la page Wikipédia « Miss France 2027 »). Ces images sont **sous droits** (crédit : B. Decoin / Sipa / TF1) : [`lib/photos.ts`](lib/photos.ts) ne stocke que des **liens** vers les photos telles que publiées par 20 Minutes — aucun fichier image n'est embarqué dans ce dépôt. L'usage est réservé au cercle privé des joueurs du salon. En cas d'indisponibilité d'une photo, un repli discret (initiale de la région) s'affiche.
 
 ## Lancer en local
 

@@ -66,6 +66,8 @@ export const LABELS = {
     finalRankingTitle: 'Classement final',
     adminLink: '🎛️ Ouvrir la console admin',
     missPhotoAlt: (region: string) => `Portrait de Miss ${region}`,
+    missWinnerTitle: '👑 Miss France 2027',
+    missWinnerRegion: (region: string) => `Miss ${region}`,
     rules: {
       detailLink: 'ℹ́ Détail du barème',
       title: 'Les règles du jeu',
