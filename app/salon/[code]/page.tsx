@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, setToken, type Candidate, type StateResponse } from '@/lib/client';
 import { LABELS } from '@/lib/labels';
+import { RULES } from '@/lib/rules';
 import { MissPhoto } from '@/app/_components/MissPhoto';
+import { Footer } from '@/app/_components/Footer';
 
 const STAGE_LABELS: Record<string, string> = {
   top15_open: LABELS.joueur.stageTabs.top15,
@@ -182,7 +184,7 @@ export default function SalonPage() {
   let body: React.ReactNode = null;
 
   if (stage === 'top15_open' || stage === 'top5_open') {
-    const max = stage === 'top15_open' ? 15 : 5;
+    const max = stage === 'top15_open' ? RULES.top15.size : RULES.top5.size;
     const activePool = stage === 'top15_open' ? state.candidates : top5Pool;
     const list = stage === 'top15_open' ? filtered : activePool;
     const current = selection;
@@ -361,6 +363,8 @@ export default function SalonPage() {
           </a>
         </p>
       )}
+
+      <Footer />
     </main>
   );
 }

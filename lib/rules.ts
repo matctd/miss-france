@@ -7,11 +7,24 @@ export type Stage =
   | 'final_locked'
   | 'done';
 
-export const RULES = {
+// Pour changer la taille de la première étape (ex. top 12 au lieu de top 15),
+// il suffit de modifier `size` ci-dessous : le maximum de points, les écrans
+// joueur/admin et les vérifications serveur suivent automatiquement.
+const RULES_BASE = {
   top15: { perMiss: 2, size: 15 },
   top5: { perFinalist: 6, size: 5 },
   order: { winner: 15, firstDauphine: 10, secondDauphine: 5, fourthOrFifth: 2.5 },
-  maxTotal: 95,
+};
+
+export const RULES = {
+  ...RULES_BASE,
+  maxTotal:
+    RULES_BASE.top15.perMiss * RULES_BASE.top15.size +
+    RULES_BASE.top5.perFinalist * RULES_BASE.top5.size +
+    RULES_BASE.order.winner +
+    RULES_BASE.order.firstDauphine +
+    RULES_BASE.order.secondDauphine +
+    2 * RULES_BASE.order.fourthOrFifth,
 };
 
 export type Picks = {

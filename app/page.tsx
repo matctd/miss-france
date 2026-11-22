@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, setToken } from '@/lib/client';
 import { LABELS } from '@/lib/labels';
+import { Footer } from '@/app/_components/Footer';
 
 export default function Home() {
   const router = useRouter();
@@ -66,6 +67,8 @@ export default function Home() {
       )}
 
       {error && <p className="error">{error}</p>}
+
+      <Footer />
     </main>
   );
 }

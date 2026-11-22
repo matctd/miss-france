@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { db, getSalon, effectiveStage } from '@/lib/db';
+import { RULES } from '@/lib/rules';
 
-const SIZES: Record<string, number> = { top15: 15, top5: 5, order: 5 };
+const SIZES: Record<string, number> = { top15: RULES.top15.size, top5: RULES.top5.size, order: RULES.top5.size };
 const OPEN_STAGES: Record<string, string> = {
   top15: 'top15_open',
   top5: 'top5_open',

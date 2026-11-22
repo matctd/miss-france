@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { api, getToken, type StateResponse } from '@/lib/client';
 import { LABELS } from '@/lib/labels';
+import { RULES } from '@/lib/rules';
 import { MissPhoto } from '@/app/_components/MissPhoto';
+import { Footer } from '@/app/_components/Footer';
 
 const STAGE_TEXT: Record<string, string> = LABELS.admin.stageText;
 
@@ -155,7 +157,7 @@ export default function AdminPage() {
                 stage: resStage,
                 ids: [...saved, selected],
               },
-              LABELS.admin.resultsSaved(resStage === 'podium' ? 'Podium' : resStage === 'top15' ? 'Top 15' : 'Top 5'),
+              LABELS.admin.resultsSaved(resStage === 'podium' ? 'Podium' : resStage === 'top15' ? LABELS.admin.top15Name : 'Top 5'),
               `results-${resStage}`
             ).then(() => setSelected(''))
           }
@@ -238,7 +240,7 @@ export default function AdminPage() {
 
         <ResultsBlock
           resStage="top15"
-          max={15}
+          max={RULES.top15.size}
           label={LABELS.admin.top15Label}
           saved={top15}
           addLabel={LABELS.admin.top15Save}
@@ -336,6 +338,8 @@ export default function AdminPage() {
           {LABELS.admin.backLink}
         </a>
       </p>
+
+      <Footer />
     </main>
   );
 }
