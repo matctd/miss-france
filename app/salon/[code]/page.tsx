@@ -462,12 +462,17 @@ function ScoresCard({ state, me }: { state: StateResponse; me: string }) {
   );
 }
 
+function medal(rank: number): string {
+  return rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
+}
+
 function FinalScreen({ state }: { state: StateResponse }) {
   const classement = state.classement;
   const winner = classement[0];
   const winnerMissId = state.results.podium?.[0];
   const winnerMiss = winnerMissId ? state.candidates.find((c) => String(c.id) === winnerMissId) : undefined;
   const winnerMissName = winnerMiss ? CANDIDATE_NAMES[winnerMiss.region] : undefined;
+  const head = LABELS.joueur.scoresHead;
 
   return (
     <>
@@ -476,7 +481,6 @@ function FinalScreen({ state }: { state: StateResponse }) {
           <div className="miss-winner">
             <MissPhoto region={winnerMiss.region} size={150} />
             <div>
-              <div className="crown">👑</div>
               <div className="region">{LABELS.joueur.missWinnerRegion(winnerMiss.region)}</div>
               {winnerMissName && <div className="name">{winnerMissName}</div>}
             </div>
@@ -492,15 +496,32 @@ function FinalScreen({ state }: { state: StateResponse }) {
       </div>
       <div className="card">
         <h2>{LABELS.joueur.finalRankingTitle}</h2>
-        {classement.map((p) => (
-          <div className="ranking-row" key={p.pseudo}>
-            <span className="rank">
-              {p.rank === 1 ? '🥇' : p.rank === 2 ? '🥈' : p.rank === 3 ? '🥉' : `${p.rank}.`}
-            </span>
-            <span>{p.pseudo}</span>
-            <span className="pts">{p.score.total} pts</span>
-          </div>
-        ))}
+        <table className="scores">
+          <thead>
+            <tr>
+              <th />
+              <th>{head.player}</th>
+              <th>{head.top15}</th>
+              <th>{head.top5}</th>
+              <th>{head.order}</th>
+              <th>{head.total}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {classement.map((p) => (
+              <tr key={p.pseudo}>
+                <td>{medal(p.rank)}</td>
+                <td>{p.pseudo}</td>
+                <td>{p.score.top15}</td>
+                <td>{p.score.top5}</td>
+                <td>{p.score.order}</td>
+                <td>
+                  <strong>{p.score.total}</strong>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
