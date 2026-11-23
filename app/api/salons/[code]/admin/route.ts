@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, getSalon, effectiveStage } from '@/lib/db';
+import { RULES } from '@/lib/rules';
 
 function requireAdmin(salonId: number, token: unknown) {
   if (typeof token !== 'string') return null;
@@ -62,8 +63,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     }
     const top15 = getResultat(salon.id, 'top15');
     const top5 = getResultat(salon.id, 'top5');
-    if (target === 'top5_open' && (!top15 || top15.length !== 15)) {
-      return NextResponse.json({ error: 'Saisis d’abord les 15 du top 15 complet' }, { status: 409 });
+    if (target === 'top5_open' && (!top15 || top15.length !== RULES.top15.size)) {
+      return NextResponse.json({ error: `Saisis d’abord le top ${RULES.top15.size} complet` }, { status: 409 });
     }
     if (target === 'final_open' && (!top5 || top5.length !== 5)) {
       return NextResponse.json({ error: 'Saisis d’abord les 5 finalistes' }, { status: 409 });
@@ -85,7 +86,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       saveResultat(salon.id, 'podium', validated);
       return NextResponse.json({ ok: true, count: validated.length });
     }
-    const max = resStage === 'top15' ? 15 : 5;
+    const max = resStage === 'top15' ? RULES.top15.size : RULES.top5.size;
     const validated = validateIds(salon.id, body?.ids, max, 1);
     if (typeof validated === 'string') {
       return NextResponse.json({ error: validated }, { status: 400 });

@@ -37,7 +37,7 @@ export const LABELS = {
     selectedCount: 'sélectionnées',
     searchPlaceholder: '🔍 Rechercher une région…',
     randomButton: '🎲 Compléter au hasard',
-    validateTop15: '✅ VALIDER MON TOP 15',
+    validateTop15: `✅ VALIDER MON TOP ${SIZE_1}`,
     validateTop5: '✅ VALIDER MON TOP 5',
     orderTitle: '👑 Dernière ligne droite — ordonne le top 5',
     orderHint:
@@ -47,7 +47,7 @@ export const LABELS = {
     validateOrder: '👑 VALIDER MON PODIUM',
     savedPicks: '✅ Pronostic enregistré ! Modifiable jusqu’au verrouillage.',
     savedOrder: '👑 Podium enregistré ! Modifiable jusqu’au verrouillage.',
-    savedTop15Button: '✏️ MODIFIER MON TOP 15',
+    savedTop15Button: `✏️ MODIFIER MON TOP ${SIZE_1}`,
     savedTop5Button: '✏️ MODIFIER MON TOP 5',
     savedOrderButton: '✏️ MODIFIER MON PODIUM',
     showScores: '🏆 Afficher le classement des amis',
