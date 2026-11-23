@@ -36,6 +36,7 @@ export default function SalonPage() {
   const [search, setSearch] = useState('');
   const [selection, setSelection] = useState<string[]>([]);
   const [orderRanks, setOrderRanks] = useState<Record<string, string>>({});
+  const [orderError, setOrderError] = useState('');
   const [joinPseudo, setJoinPseudo] = useState('');
 
   useEffect(() => {
@@ -264,27 +265,30 @@ export default function SalonPage() {
                 }}
               >
                 <option value="">{LABELS.joueur.choosePosition}</option>
-                {positions.map((lbl, i) => {
-                  const pos = String(i + 1);
-                  const takenByOther = Object.entries(orderRanks).some(([id, r]) => id !== c && r === pos);
-                  return (
-                    <option key={pos} value={pos} disabled={takenByOther}>
-                      {lbl}
-                    </option>
-                  );
-                })}
+                {positions.map((lbl, i) => (
+                  <option key={String(i + 1)} value={String(i + 1)}>
+                    {lbl}
+                  </option>
+                ))}
               </select>
             </div>
           );
         })}
         <button
-          onClick={() =>
-            submitOrder(Object.entries(orderRanks).sort((a, b) => Number(a[1]) - Number(b[1])).map(([id]) => id))
-          }
+          onClick={() => {
+            const ranks = Object.values(orderRanks);
+            if (new Set(ranks).size !== ranks.length) {
+              setOrderError(LABELS.joueur.orderDuplicateError);
+              return;
+            }
+            setOrderError('');
+            submitOrder(Object.entries(orderRanks).sort((a, b) => Number(a[1]) - Number(b[1])).map(([id]) => id));
+          }}
           disabled={!ranksAssigned}
         >
           {savedOrder ? LABELS.joueur.savedOrderButton : LABELS.joueur.validateOrder}
         </button>
+        {orderError && <p className="error">{orderError}</p>}
         {savedOrder && (
           <p className="hint" style={{ textAlign: 'center' }}>{LABELS.joueur.savedOrder}</p>
         )}
