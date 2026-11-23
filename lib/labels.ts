@@ -5,8 +5,8 @@ const TOP15_NAME = `Top ${SIZE_1}`;
 const TOP15_MAX = RULES.top15.perMiss * RULES.top15.size;
 const TOP5_MAX = RULES.top5.perFinalist * RULES.top5.size;
 const PODIUM_MAX =
-  RULES.order.winner + RULES.order.firstDauphine + RULES.order.secondDauphine + 2 * RULES.order.fourthOrFifth;
-const PTS_45 = String(RULES.order.fourthOrFifth).replace('.', ',');
+  RULES.order.winner + RULES.order.firstDauphine + RULES.order.secondDauphine + 2 * RULES.order.thirdOrFourthDauphine;
+const PTS_45 = String(RULES.order.thirdOrFourthDauphine).replace('.', ',');
 
 export const LABELS = {
   footer: {
@@ -15,7 +15,7 @@ export const LABELS = {
   },
   app: {
     title: '👑 MISS PRONOS 👑',
-    tagline: '« Qui connaît vraiment la couronne ? »',
+    tagline: '« Qui remportera la couronne ? »',
   },
   accueil: {
     createTitle: '✨ Créer un salon (admin)',

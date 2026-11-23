@@ -8,9 +8,9 @@ Web app de pronostics Miss France entre amis. Chacun sélectionne son top 12 pen
 |---|---|---|---|
 | 1. Top 12 | Début du direct → verrouillage admin | 12 miss (sélection seule) | 2 pts / miss trouvée (max 24) |
 | 2. Top 5 | Fenêtre live ouverte par l'admin (~15-20 min) | 5 finalistes | 6 pts / finaliste trouvé (max 30) |
-| 3. Classement | Fenêtre live ouverte par l'admin (~10-15 min) | Top 5 ordonné | Gagnante 15 · 1re dauphine 10 · 2e dauphine 5 · 3e/4e dauphine 2,5 (max 35) |
+| 3. Classement | Fenêtre live ouverte par l'admin (~10-15 min) | Top 5 ordonné | Gagnante 15 · 1re dauphine 10 · 2e dauphine 5 · 3e/4e dauphine 3 (max 36) |
 
-**Total max : 89 points.** Les places 4 et 5 n'étant pas ordonnées officiellement, l'ordre entre elles n'affecte pas le score.
+**Total max : 90 points.** Les places 4 et 5 n'étant pas ordonnées officiellement, l'ordre entre elles n'affecte pas le score.
 
 **Départage des ex æquo** (dans l'ordre) : gagnante trouvée → podium complet → score du top 12 → soumission la plus précoce.
 
