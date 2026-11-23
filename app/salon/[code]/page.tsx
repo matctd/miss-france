@@ -9,17 +9,13 @@ import { RULES } from '@/lib/rules';
 import { MissPhoto } from '@/app/_components/MissPhoto';
 import { Footer } from '@/app/_components/Footer';
 
-const STAGE_LABELS: Record<string, string> = {
-  top15_open: LABELS.joueur.stageTabs.top15,
-  top15_locked: LABELS.joueur.stageTabs.top15,
-  top5_open: LABELS.joueur.stageTabs.top5,
-  top5_locked: LABELS.joueur.stageTabs.top5,
-  final_open: LABELS.joueur.stageTabs.final,
-  final_locked: LABELS.joueur.stageTabs.final,
-  done: LABELS.joueur.stageTabs.done,
-};
-
 const STAGE_ORDER = ['top15', 'top5', 'final'];
+
+const STAGE_LABELS: Record<string, string> = {
+  top15: LABELS.joueur.stageTabs.top15,
+  top5: LABELS.joueur.stageTabs.top5,
+  final: LABELS.joueur.stageTabs.final,
+};
 
 function stageIndex(stage: string): number {
   if (stage.startsWith('top15')) return 0;
