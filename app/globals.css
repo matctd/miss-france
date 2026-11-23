@@ -180,6 +180,7 @@ button.small {
 }
 
 .search-wrap .search {
+  display: block;
   margin-bottom: 0;
   padding-right: 42px;
 }
