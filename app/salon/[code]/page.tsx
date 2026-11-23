@@ -295,7 +295,7 @@ export default function SalonPage() {
       </div>
     );
   } else if (stage === 'done') {
-    body = <FinalScreen state={state} />;
+    body = <FinalScreen state={state} me={state.me.pseudo} />;
   } else {
     body = <RevealScreen state={state} regions={regions} me={state.me.pseudo} myPicks={state.me.picks} />;
   }
@@ -466,7 +466,7 @@ function medal(rank: number): string {
   return rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
 }
 
-function FinalScreen({ state }: { state: StateResponse }) {
+function FinalScreen({ state, me }: { state: StateResponse; me: string }) {
   const classement = state.classement;
   const winner = classement[0];
   const winnerMissId = state.results.podium?.[0];
@@ -508,7 +508,7 @@ function FinalScreen({ state }: { state: StateResponse }) {
           </thead>
           <tbody>
             {classement.map((p) => (
-              <tr key={p.pseudo}>
+              <tr key={p.pseudo} style={p.pseudo === me ? { color: 'var(--gold)' } : undefined}>
                 <td>{medal(p.rank)}</td>
                 <td>{p.pseudo}</td>
                 <td>{p.score.top15}</td>
