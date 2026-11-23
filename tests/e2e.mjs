@@ -65,7 +65,7 @@ function assert(cond, label) {
 
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   const scores = Object.fromEntries(st.classement.map((p) => [p.pseudo, p.score.top15]));
-  assert(scores['Léa'] === 20 && scores['Karim'] === 16 && scores['Sofia'] === 12, `scores top15 corrects ${JSON.stringify(scores)}`);
+  assert(scores['Léa'] === 30 && scores['Karim'] === 24 && scores['Sofia'] === 18, `scores top15 corrects ${JSON.stringify(scores)}`);
 
   const real5 = [real12[2], real12[8], real12[0], real12[11], real12[6]];
   await api(`/api/salons/${code}/picks`, { token: admin, stage: 'top5', data: real5 });
@@ -92,9 +92,9 @@ function assert(cond, label) {
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'done', 'soirée terminée');
 
-  // Attendu : Léa 20+30+36=86 | Karim 16+24+11=51 | Sofia 12+0+5=17
+  // Attendu : Léa 30+30+36=96 | Karim 24+24+11=59 | Sofia 18+0+5=23
   const rank = st.classement.map((p) => `${p.pseudo}:${p.score.total}`);
-  assert(rank[0] === 'Léa:86' && rank[1] === 'Karim:51' && rank[2] === 'Sofia:17', `classement final ${rank.join(' | ')}`);
+  assert(rank[0] === 'Léa:96' && rank[1] === 'Karim:59' && rank[2] === 'Sofia:23', `classement final ${rank.join(' | ')}`);
 
   console.log('\n🎉 Simulation complète réussie — ' + rank.join(' | '));
 })().catch((e) => {

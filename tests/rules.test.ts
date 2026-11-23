@@ -6,9 +6,9 @@ const REAL_TOP15 = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10',
 const REAL_TOP5 = ['c3', 'c9', 'c1', 'c14', 'c7'];
 const PODIUM = ['c3', 'c9', 'c1']; // c3 gagnante, c9 1re dauphine, c1 2e dauphine
 
-test('top15 : 2 points par miss trouvée', () => {
+test('top15 : 3 points par miss trouvée', () => {
   const picks = ['c1', 'c2', 'c16', 'c17', 'c3'];
-  assert.equal(scoreTop15(picks, REAL_TOP15), 6);
+  assert.equal(scoreTop15(picks, REAL_TOP15), 9);
 });
 
 test('top15 : picks vides ou résultats absents = 0', () => {
@@ -16,9 +16,9 @@ test('top15 : picks vides ou résultats absents = 0', () => {
   assert.equal(scoreTop15(['c1'], undefined), 0);
 });
 
-test('top15 : maximum 24 points (top 12)', () => {
-  assert.equal(scoreTop15(REAL_TOP15, REAL_TOP15), 24);
-  assert.equal(RULES.top15.perMiss * RULES.top15.size, 24);
+test('top15 : maximum 36 points (top 12)', () => {
+  assert.equal(scoreTop15(REAL_TOP15, REAL_TOP15), 36);
+  assert.equal(RULES.top15.perMiss * RULES.top15.size, 36);
 });
 
 test('top5 : 6 points par finaliste trouvé', () => {
@@ -55,7 +55,7 @@ test('scorePlayer : total et détail par étape', () => {
     { top15: ['c1', 'c2', 'c3'], top5: ['c3', 'c9'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] },
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
-  assert.deepEqual(s, { top15: 6, top5: 12, order: 36, total: 54 });
+  assert.deepEqual(s, { top15: 9, top5: 12, order: 36, total: 57 });
 });
 
 test('classement : total décroissant', () => {
@@ -74,8 +74,8 @@ test('classement : total décroissant', () => {
 test('départage : gagnante trouvée avant tout (à total égal)', () => {
   const ranked = rankPlayers(
     [
-      { pseudo: 'Sans gagnante', picks: { top15: REAL_TOP15.slice(0, 6), order: ['c20', 'c21', 'c1', 'c22', 'c23'] }, earliestSubmittedAt: 100 },
-      { pseudo: 'Avec gagnante', picks: { top15: ['c1'], order: ['c3', 'c20', 'c21', 'c22', 'c23'] }, earliestSubmittedAt: 999 },
+      { pseudo: 'Sans gagnante', picks: { top15: REAL_TOP15.slice(0, 5), order: ['c20', 'c21', 'c22', 'c14', 'c7'] }, earliestSubmittedAt: 100 },
+      { pseudo: 'Avec gagnante', picks: { top15: ['c1'], order: ['c3', 'c20', 'c21', 'c14', 'c23'] }, earliestSubmittedAt: 999 },
     ],
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
@@ -85,8 +85,8 @@ test('départage : gagnante trouvée avant tout (à total égal)', () => {
 test('départage : podium complet avant score top15 (à total égal)', () => {
   const ranked = rankPlayers(
     [
-      { pseudo: 'Podium incomplet', picks: { top15: REAL_TOP15.slice(0, 2), order: ['c3', 'c9', 'c20', 'c21', 'c22'] }, earliestSubmittedAt: 100 },
-      { pseudo: 'Podium complet', picks: { top15: REAL_TOP15.slice(0, 2), order: ['c3', 'c9', 'c1', 'c20', 'c21'] }, earliestSubmittedAt: 999 },
+      { pseudo: 'Podium incomplet', picks: { top15: REAL_TOP15.slice(0, 4), order: ['c3', 'c20', 'c21', 'c14', 'c7'] }, earliestSubmittedAt: 100 },
+      { pseudo: 'Podium complet', picks: { top15: ['c1'], order: ['c3', 'c9', 'c1', 'c20', 'c21'] }, earliestSubmittedAt: 999 },
     ],
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
@@ -96,8 +96,8 @@ test('départage : podium complet avant score top15 (à total égal)', () => {
 test('départage : score top15 avant précocité', () => {
   const ranked = rankPlayers(
     [
-      { pseudo: 'Tôt mais moins bon', picks: { top15: ['c1'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] }, earliestSubmittedAt: 100 },
-      { pseudo: 'Tard mais meilleur top15', picks: { top15: ['c1', 'c2'], order: ['c3', 'c9', 'c1', 'c14', 'c7'] }, earliestSubmittedAt: 999 },
+      { pseudo: 'Tôt mais moins bon', picks: { top15: ['c1', 'c2'], order: ['c3', 'c9', 'c1', 'c14', 'c20'] }, earliestSubmittedAt: 100 },
+      { pseudo: 'Tard mais meilleur top15', picks: { top15: ['c1', 'c2', 'c3'], order: ['c3', 'c9', 'c1', 'c20', 'c21'] }, earliestSubmittedAt: 999 },
     ],
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
@@ -135,5 +135,5 @@ test('barème : le total maximum correspond au barème défini', () => {
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
   assert.equal(s.total, RULES.maxTotal);
-  assert.equal(RULES.maxTotal, 90);
+  assert.equal(RULES.maxTotal, 102);
 });
