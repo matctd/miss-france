@@ -260,10 +260,6 @@ button.small {
   border-color: var(--gold);
 }
 
-.miss-winner .crown {
-  font-size: 26px;
-  margin-bottom: 4px;
-}
 
 .miss-winner .region {
   font-size: 26px;
