@@ -230,9 +230,6 @@ export default function SalonPage() {
             </div>
           ))}
         </div>
-        <button className="secondary" onClick={() => randomComplete(max, activePool)}>
-          {LABELS.joueur.randomButton}
-        </button>
         <button
           onClick={() => submitPicks(stage === 'top15_open' ? 'top15' : 'top5', current)}
           disabled={current.length !== max}
@@ -244,6 +241,9 @@ export default function SalonPage() {
             : stage === 'top15_open'
               ? LABELS.joueur.validateTop15
               : LABELS.joueur.validateTop5}
+        </button>
+        <button className="secondary" onClick={() => randomComplete(max, activePool)}>
+          {LABELS.joueur.randomButton}
         </button>
         {savedTop && (
           <p className="hint" style={{ textAlign: 'center' }}>{LABELS.joueur.savedPicks}</p>
