@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { scoreTop15, scoreTop5, scoreOrder, scorePlayer, rankPlayers, RULES } from '../lib/rules.ts';
 
-const REAL_TOP15 = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'c13', 'c14', 'c15'];
+const REAL_TOP15 = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12'];
 const REAL_TOP5 = ['c3', 'c9', 'c1', 'c14', 'c7'];
 const PODIUM = ['c3', 'c9', 'c1']; // c3 gagnante, c9 1re dauphine, c1 2e dauphine
 
@@ -16,9 +16,9 @@ test('top15 : picks vides ou résultats absents = 0', () => {
   assert.equal(scoreTop15(['c1'], undefined), 0);
 });
 
-test('top15 : maximum 30 points', () => {
-  assert.equal(scoreTop15(REAL_TOP15, REAL_TOP15), 30);
-  assert.equal(RULES.top15.perMiss * RULES.top15.size, 30);
+test('top15 : maximum 24 points (top 12)', () => {
+  assert.equal(scoreTop15(REAL_TOP15, REAL_TOP15), 24);
+  assert.equal(RULES.top15.perMiss * RULES.top15.size, 24);
 });
 
 test('top5 : 6 points par finaliste trouvé', () => {
@@ -135,5 +135,5 @@ test('barème : le total maximum correspond au barème défini', () => {
     { top15: REAL_TOP15, top5: REAL_TOP5, podium: PODIUM }
   );
   assert.equal(s.total, RULES.maxTotal);
-  assert.equal(RULES.maxTotal, 95);
+  assert.equal(RULES.maxTotal, 89);
 });

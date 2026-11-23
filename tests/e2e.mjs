@@ -32,12 +32,12 @@ function assert(cond, label) {
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
 
   const cands = st.candidates.slice().sort((a, b) => a.id - b.id);
-  const real15 = cands.slice(0, 15).map((c) => String(c.id));
-  const others = cands.slice(15).map((c) => String(c.id));
+  const real12 = cands.slice(0, 12).map((c) => String(c.id));
+  const others = cands.slice(12).map((c) => String(c.id));
 
-  await api(`/api/salons/${code}/picks`, { token: admin, stage: 'top15', data: [...real15.slice(0, 10), ...others.slice(0, 5)] });
-  await api(`/api/salons/${code}/picks`, { token: karim.json.token, stage: 'top15', data: [...real15.slice(0, 8), ...others.slice(0, 7)] });
-  await api(`/api/salons/${code}/picks`, { token: sofia.json.token, stage: 'top15', data: [...real15.slice(0, 6), ...others.slice(0, 9)] });
+  await api(`/api/salons/${code}/picks`, { token: admin, stage: 'top15', data: [...real12.slice(0, 10), ...others.slice(0, 2)] });
+  await api(`/api/salons/${code}/picks`, { token: karim.json.token, stage: 'top15', data: [...real12.slice(0, 8), ...others.slice(0, 4)] });
+  await api(`/api/salons/${code}/picks`, { token: sofia.json.token, stage: 'top15', data: [...real12.slice(0, 6), ...others.slice(0, 6)] });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.counts.top15 === 3, '3 picks top15 comptés');
   assert(!('Karim' in st.revealedPicks) && !('Sofia' in st.revealedPicks), 'picks des autres masqués pendant la fenêtre ouverte');
@@ -50,15 +50,15 @@ function assert(cond, label) {
   assert(st.stage === 'top15_locked', 'top15 verrouillé');
   assert(Object.keys(st.revealedPicks).length === 3, 'picks révélés après verrouillage');
 
-  const late = await api(`/api/salons/${code}/picks`, { token: karim.json.token, stage: 'top15', data: real15 });
+  const late = await api(`/api/salons/${code}/picks`, { token: karim.json.token, stage: 'top15', data: real12 });
   assert(late.status === 409, 'soumission après verrouillage refusée (409)');
 
   const noRes = await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5', minutes: 20 });
   assert(noRes.status === 409, 'ouverture top5 bloquée sans résultats top15');
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real15.slice(0, 8) });
-  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real15.slice(8) });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real12.slice(0, 8) });
+  await api(`/api/salons/${code}/admin`, { token: admin, action: 'setResults', stage: 'top15', ids: real12.slice(8) });
   const partial = (await api(`/api/salons/${code}/state?token=${admin}`)).json.results;
-  assert(partial.top15.length === 15, 'saisie incrémentale du top 15 fusionnée (8+7)');
+  assert(partial.top15.length === 12, 'saisie incrémentale du top 12 fusionnée (8+4)');
   await api(`/api/salons/${code}/admin`, { token: admin, action: 'open', stage: 'top5' });
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'top5_open', 'fenêtre top5 ouverte');
@@ -67,7 +67,7 @@ function assert(cond, label) {
   const scores = Object.fromEntries(st.classement.map((p) => [p.pseudo, p.score.top15]));
   assert(scores['Léa'] === 20 && scores['Karim'] === 16 && scores['Sofia'] === 12, `scores top15 corrects ${JSON.stringify(scores)}`);
 
-  const real5 = [real15[2], real15[8], real15[0], real15[13], real15[6]];
+  const real5 = [real12[2], real12[8], real12[0], real12[11], real12[6]];
   await api(`/api/salons/${code}/picks`, { token: admin, stage: 'top5', data: real5 });
   await api(`/api/salons/${code}/picks`, { token: karim.json.token, stage: 'top5', data: [real5[0], real5[1], real5[2], real5[3], others[0]] });
   await api(`/api/salons/${code}/picks`, { token: sofia.json.token, stage: 'top5', data: others.slice(0, 5) });
