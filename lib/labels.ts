@@ -63,7 +63,6 @@ export const LABELS = {
     countsTop5: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leur top 5`,
     countsOrder: (n: number, total: number) => `👥 ${n}/${total} amis ont validé leur podium`,
     winnerTitle: '🎉 LA REINE DE LA SOIRÉE 🎉',
-    winnerSubtitle: '« Meilleur pronostiqueur de la soirée »',
     finalRankingTitle: 'Classement final',
     adminLink: '🎛️ Ouvrir la console admin',
     missPhotoAlt: (region: string) => `Portrait de Miss ${region}`,
