@@ -11,7 +11,7 @@ export type Stage =
 // il suffit de modifier `size` ci-dessous : le maximum de points, les écrans
 // joueur/admin et les vérifications serveur suivent automatiquement.
 const RULES_BASE = {
-  top15: { perMiss: 2, size: 12 },
+  top15: { perMiss: 3, size: 12 },
   top5: { perFinalist: 6, size: 5 },
   order: { winner: 15, firstDauphine: 10, secondDauphine: 5, thirdOrFourthDauphine: 3 },
 };
