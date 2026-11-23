@@ -492,7 +492,6 @@ function FinalScreen({ state }: { state: StateResponse }) {
         <h2 style={{ border: 'none' }}>{LABELS.joueur.winnerTitle}</h2>
         <div className="name">👑 {winner?.pseudo ?? '—'} 👑</div>
         <div className="pts">{winner?.score.total ?? 0} points</div>
-        <p className="hint">{LABELS.joueur.winnerSubtitle}</p>
       </div>
       <div className="card">
         <h2>{LABELS.joueur.finalRankingTitle}</h2>
