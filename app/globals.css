@@ -261,6 +261,15 @@ button.small {
 }
 
 
+.miss-winner .pageant {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
 .miss-winner .region {
   font-size: 26px;
   font-weight: 700;

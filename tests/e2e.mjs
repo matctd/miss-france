@@ -92,9 +92,9 @@ function assert(cond, label) {
   st = (await api(`/api/salons/${code}/state?token=${admin}`)).json;
   assert(st.stage === 'done', 'soirée terminée');
 
-  // Attendu : Léa 20+30+35=85 | Karim 16+24+10=50 | Sofia 12+0+5=17
+  // Attendu : Léa 20+30+36=86 | Karim 16+24+11=51 | Sofia 12+0+5=17
   const rank = st.classement.map((p) => `${p.pseudo}:${p.score.total}`);
-  assert(rank[0] === 'Léa:85' && rank[1] === 'Karim:50' && rank[2] === 'Sofia:17', `classement final ${rank.join(' | ')}`);
+  assert(rank[0] === 'Léa:86' && rank[1] === 'Karim:51' && rank[2] === 'Sofia:17', `classement final ${rank.join(' | ')}`);
 
   console.log('\n🎉 Simulation complète réussie — ' + rank.join(' | '));
 })().catch((e) => {

@@ -481,11 +481,11 @@ function FinalScreen({ state, me }: { state: StateResponse; me: string }) {
           <div className="miss-winner">
             <MissPhoto region={winnerMiss.region} size={150} />
             <div>
+              <div className="pageant">{LABELS.joueur.missWinnerTitle}</div>
               <div className="region">{LABELS.joueur.missWinnerRegion(winnerMiss.region)}</div>
               {winnerMissName && <div className="name">{winnerMissName}</div>}
             </div>
           </div>
-          <p className="hint" style={{ textAlign: 'center' }}>{LABELS.joueur.missWinnerTitle}</p>
         </div>
       )}
       <div className="card winner-banner">

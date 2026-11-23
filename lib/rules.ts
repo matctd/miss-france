@@ -13,7 +13,7 @@ export type Stage =
 const RULES_BASE = {
   top15: { perMiss: 2, size: 12 },
   top5: { perFinalist: 6, size: 5 },
-  order: { winner: 15, firstDauphine: 10, secondDauphine: 5, fourthOrFifth: 2.5 },
+  order: { winner: 15, firstDauphine: 10, secondDauphine: 5, thirdOrFourthDauphine: 3 },
 };
 
 export const RULES = {
@@ -24,7 +24,7 @@ export const RULES = {
     RULES_BASE.order.winner +
     RULES_BASE.order.firstDauphine +
     RULES_BASE.order.secondDauphine +
-    2 * RULES_BASE.order.fourthOrFifth,
+    2 * RULES_BASE.order.thirdOrFourthDauphine,
 };
 
 export type Picks = {
@@ -68,7 +68,7 @@ export function scoreOrder(
   if (order[1] && order[1] === podium[1]) points += RULES.order.firstDauphine;
   if (order[2] && order[2] === podium[2]) points += RULES.order.secondDauphine;
   for (const slot of order.slice(3)) {
-    if (slot && nonPodium.includes(slot)) points += RULES.order.fourthOrFifth;
+    if (slot && nonPodium.includes(slot)) points += RULES.order.thirdOrFourthDauphine;
   }
   return points;
 }
