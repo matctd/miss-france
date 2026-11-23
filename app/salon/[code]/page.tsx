@@ -198,13 +198,25 @@ export default function SalonPage() {
           {current.length}/{max} {LABELS.joueur.selectedCount}
         </p>
         {stage === 'top15_open' && (
-          <input
-            className="search"
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={LABELS.joueur.searchPlaceholder}
-          />
+          <div className="search-wrap">
+            <input
+              className="search"
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={LABELS.joueur.searchPlaceholder}
+            />
+            {search && (
+              <button
+                type="button"
+                className="search-clear"
+                onClick={() => setSearch('')}
+                aria-label="Effacer la recherche"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         )}
         <div className="grid-candidates">
           {list.map((c) => (
