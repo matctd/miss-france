@@ -27,7 +27,7 @@ export const LABELS = {
     createButton: 'CRÉER LE SALON →',
   },
   joueur: {
-    stageTabs: { top15: TOP15_NAME, top5: 'Top 5', final: 'Classement', done: 'Résultats' },
+    stageTabs: { top15: TOP15_NAME, top5: 'Top 5', final: 'Finale', done: 'Résultats' },
     loadingSalon: 'Chargement du salon',
     joinCardTitle: 'Ton pseudo',
     joinHeadingSuffix: 'Rejoins la partie !',
