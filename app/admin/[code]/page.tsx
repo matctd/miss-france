@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [top15Sel, setTop15Sel] = useState('');
   const [top5Sel, setTop5Sel] = useState('');
   const [podiumRanks, setPodiumRanks] = useState<Record<string, string>>({});
+  const [podiumError, setPodiumError] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -98,10 +99,15 @@ export default function AdminPage() {
   }
 
   async function savePodium() {
+    const assigned = top5.map((id) => podiumRanks[id]).filter(Boolean);
+    if (assigned.length !== 5 || new Set(assigned).size !== assigned.length) {
+      setPodiumError(LABELS.admin.podiumDuplicateError);
+      return;
+    }
+    setPodiumError('');
     const ordered = top5
       .filter((id) => podiumRanks[id])
       .sort((a, b) => Number(podiumRanks[a]) - Number(podiumRanks[b]));
-    if (ordered.length !== 5) return;
     await act({ action: 'setResults', stage: 'podium', ids: ordered }, LABELS.admin.resultsSaved('Podium'), 'results-podium');
   }
 
@@ -286,21 +292,18 @@ export default function AdminPage() {
                   }}
                 >
                   <option value="">{LABELS.admin.podiumChoosePosition}</option>
-                  {LABELS.admin.podiumPositions.map((lbl, i) => {
-                    const pos = String(i + 1);
-                    const takenByOther = top5.some((cid) => cid !== id && podiumRanks[cid] === pos);
-                    return (
-                      <option key={pos} value={pos} disabled={takenByOther}>
-                        {lbl}
-                      </option>
-                    );
-                  })}
+                  {LABELS.admin.podiumPositions.map((lbl, i) => (
+                    <option key={String(i + 1)} value={String(i + 1)}>
+                      {lbl}
+                    </option>
+                  ))}
                 </select>
               </div>
             ))}
             <button onClick={savePodium} disabled={top5.filter((cid) => podiumRanks[cid]).length !== 5}>
               {LABELS.admin.podiumSave}
             </button>
+            {podiumError && <p className="error">{podiumError}</p>}
             {infos['results-podium'] && <p className="success">{infos['results-podium']}</p>}
             <button
               className="small secondary danger"

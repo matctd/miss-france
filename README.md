@@ -8,7 +8,7 @@ Web app de pronostics Miss France entre amis. Chacun sélectionne son top 12 pen
 |---|---|---|---|
 | 1. Top 12 | Début du direct → verrouillage admin | 12 miss (sélection seule) | 2 pts / miss trouvée (max 24) |
 | 2. Top 5 | Fenêtre live ouverte par l'admin (~15-20 min) | 5 finalistes | 6 pts / finaliste trouvé (max 30) |
-| 3. Classement | Fenêtre live ouverte par l'admin (~10-15 min) | Top 5 ordonné | Gagnante 15 · 1re dauphine 10 · 2e dauphine 5 · 4e/5e 2,5 (max 35) |
+| 3. Classement | Fenêtre live ouverte par l'admin (~10-15 min) | Top 5 ordonné | Gagnante 15 · 1re dauphine 10 · 2e dauphine 5 · 3e/4e dauphine 2,5 (max 35) |
 
 **Total max : 89 points.** Les places 4 et 5 n'étant pas ordonnées officiellement, l'ordre entre elles n'affecte pas le score.
 
@@ -53,7 +53,7 @@ node tests/e2e.mjs  # simulation complète d'une soirée (serveur requis sur :31
 4. L'admin verrouille juste avant l'annonce → les picks se révèlent, les scores tombent en direct
 5. L'admin saisit le top 12 réel au fil des annonces (ajout incrémental, par région dans une liste déroulante), ouvre la fenêtre top 5 (~15-20 min)
 6. L'admin saisit le top 5 réel (l'ordre n'importe pas à cette étape), ouvre la fenêtre classement
-7. Pendant le couronnement, l'admin saisit le classement des 5 finalistes dans l'ordre (gagnante, 1re dauphine, 2e dauphine, puis 4ᵉ et 5ᵉ — l'ordre officiel des deux dernières n'étant pas annoncé, il est à l'appréciation de l'admin et le score des places 4-5 reste indulgent), puis verrouille et termine la soirée → classement final + stats
+7. Pendant le couronnement, l'admin saisit le classement des 5 finalistes dans l'ordre (gagnante, 1re dauphine, 2e dauphine, puis 3ᵉ et 4ᵉ dauphine — l'ordre officiel des deux dernières n'étant pas annoncé, il est à l'appréciation de l'admin et le score des places 4-5 reste indulgent), puis verrouille et termine la soirée → classement final + stats
 
 ## Déployer
 
